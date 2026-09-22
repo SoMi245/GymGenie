@@ -486,7 +486,17 @@ VRATI TAČNO 7 DANA U JSON FORMATU.
         }
       );
 
-      const data = await response.json();
+      const responseText = await response.text();
+
+let data;
+
+try {
+  data = JSON.parse(responseText);
+} catch (e) {
+  throw new Error(
+    responseText || "Server je vratio neispravan odgovor."
+  );
+}
 
       if (!response.ok) {
         throw new Error(
