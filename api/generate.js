@@ -1,7 +1,18 @@
 ```javascript
 export default async function handler(req, res) {
+  // GET test
+  if (req.method === "GET") {
+    return res.status(200).json({
+      status: "GymGenie API radi.",
+      message: "Koristi POST zahtjev za generisanje plana."
+    });
+  }
+
+  // Samo POST generiše plan
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
@@ -25,40 +36,40 @@ export default async function handler(req, res) {
     const prompt = `
 Ti si GymGenie AI trener.
 
-Podaci:
+Korisnik:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
 Treninga sedmično: ${trainingDays}
-Mjesto: ${location}
+Mjesto treninga: ${location}
 Obroka dnevno: ${meals}
 
-Napravi KRATAK i JASAN plan za svih 7 dana.
+Napravi KRATAK plan za svih 7 dana.
 
-Za svaki dan napiši samo:
-DAN + TRENING/ODMOR
-- 3 do 5 glavnih vježbi ako je trening
+ZA SVAKI DAN:
+DAN - TRENING ili ODMOR
+- 3 do 5 vježbi ako je trening
 - serije x ponavljanja
-- kratke obroke prema broju obroka
-- okvirne kalorije
+- obroci prema broju obroka
+- kalorije
 - protein
 - voda
 
-Ne objašnjavaj vježbe.
+Ne piši objašnjenja vježbi.
 Ne piši uvod.
 Ne ponavljaj podatke korisnika.
-Ne dodaj nepotreban tekst.
+Budi kratak i praktičan.
 
-Na kraju napiši:
+Na kraju:
 CILJ:
 KALORIJE:
 PROTEIN:
 VODA:
 
-Koristi srpski/bosanski jezik.
-Kalorije, protein i voda su okvirne preporuke, ne medicinski savjet.
+Piši na srpskom/bosanskom jeziku.
+Kalorije, protein i voda su okvirne preporuke.
 `;
 
     const response = await fetch(
@@ -74,7 +85,7 @@ Kalorije, protein i voda su okvirne preporuke, ne medicinski savjet.
           messages: [
             {
               role: "system",
-              content: "You are GymGenie. Give short, practical fitness plans."
+              content: "You are GymGenie. Give short practical fitness plans."
             },
             {
               role: "user",
@@ -91,9 +102,9 @@ Kalorije, protein i voda su okvirne preporuke, ne medicinski savjet.
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Cloudflare API error:", data);
+      console.error("Cloudflare error:", data);
 
-      return res.status(response.status || 500).json({
+      return res.status(502).json({
         error:
           data?.error?.message ||
           data?.errors?.[0]?.message ||
@@ -107,20 +118,22 @@ Kalorije, protein i voda su okvirne preporuke, ne medicinski savjet.
       "";
 
     if (!plan) {
-      console.error("Cloudflare returned no text:", data);
+      console.error("No AI text:", data);
 
       return res.status(502).json({
         error: "AI nije vratio tekst plana."
       });
     }
 
-    return res.status(200).json({ plan });
+    return res.status(200).json({
+      plan
+    });
 
   } catch (error) {
     console.error("Server error:", error);
 
     return res.status(500).json({
-      error: "Greška servera."
+      error: "Greška servera: " + (error?.message || "Nepoznata greška.")
     });
   }
 }
