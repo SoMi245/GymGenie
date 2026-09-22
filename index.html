@@ -292,12 +292,11 @@
 </div>
 
 <script>
-
-function generatePlan() {
-
+async function generatePlan() {
   const height = Number(document.getElementById("height").value);
   const weight = Number(document.getElementById("weight").value);
   const age = Number(document.getElementById("age").value);
+  const experience = document.getElementById("experience").value;
   const goal = document.getElementById("goal").value;
   const trainingDays = Number(document.getElementById("days").value);
   const location = document.getElementById("location").value;
@@ -308,92 +307,84 @@ function generatePlan() {
     return;
   }
 
-  const bmiValue = weight / Math.pow(height / 100, 2);
+  const button = document.querySelector("button");
+  button.disabled = true;
+  button.textContent = "AI PRAVI TVOJ PLAN...";
 
-  let calories = weight * 30;
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        height,
+        weight,
+        age,
+        experience,
+        goal,
+        trainingDays,
+        location,
+        meals
+      })
+    });
 
-  if (goal === "Dobijanje mišića") {
-    calories += 300;
-  }
+    const data = await response.json();
 
-  if (goal === "Mršavljenje") {
-    calories -= 300;
-  }
+    if (!response.ok) {
+      throw new Error(data.error || "Greška pri generisanju plana.");
+    }
 
-  const protein = Math.round(weight * 1.8);
-  const water = (weight * 0.035).toFixed(1);
+    const plan = data.plan;
 
-  document.getElementById("bmi").textContent = bmiValue.toFixed(1);
-  document.getElementById("calories").textContent = Math.round(calories) + " kcal";
-  document.getElementById("protein").textContent = protein + " g";
-  document.getElementById("water").textContent = water + " L";
-
-  const days = [
-    "Ponedjeljak",
-    "Utorak",
-    "Srijeda",
-    "Četvrtak",
-    "Petak",
-    "Subota",
-    "Nedjelja"
-  ];
-
-  const workouts = [
-    "Grudi + triceps",
-    "Leđa + biceps",
-    "Odmor i lagana šetnja",
-    "Noge + core",
-    "Ramena + ruke",
-    "Kardio / kondicija",
-    "Potpuni odmor"
-  ];
-
-  let html = "";
-
-  days.forEach((day, index) => {
-
-    const isRest = index === 2 || index === 6;
-
-    html += `
+    document.getElementById("weeklyPlan").innerHTML = `
       <div class="day">
-
-        <span class="tag">${day}</span>
-
-        <h3>${isRest ? "🛌 Dan odmora" : "🏋️ " + workouts[index]}</h3>
-
-        ${
-          isRest
-          ? `<p><strong>Oporavak:</strong> lagana šetnja, istezanje i dovoljno sna.</p>`
-          : `
-            <p><strong>Vježbe:</strong> 4–5 vježbi</p>
-            <p><strong>Serije:</strong> 3–4</p>
-            <p><strong>Ponavljanja:</strong> 8–12</p>
-            <p><strong>Odmor:</strong> 60–120 sekundi</p>
-            <p><strong>Lokacija:</strong> ${location}</p>
-          `
-        }
-
-        <p><strong>🍳 Doručak:</strong> jaja + zobene pahuljice + voće</p>
-        <p><strong>🥗 Ručak:</strong> piletina + riža + povrće</p>
-        <p><strong>🍎 Užina:</strong> grčki jogurt + voće</p>
-        <p><strong>🍽️ Večera:</strong> tuna/piletina + salata + krompir</p>
-
-        <p><strong>💧 Voda:</strong> oko ${water} L</p>
-
+        <span class="tag">GYMGENIE AI</span>
+        <h3>🤖 Tvoj personalizovani plan</h3>
+        <p style="white-space: pre-wrap;">${escapeHtml(plan)}</p>
       </div>
     `;
-  });
 
-  document.getElementById("weeklyPlan").innerHTML = html;
-  document.getElementById("result").style.display = "block";
+    const bmi = weight / Math.pow(height / 100, 2);
+    const calories = weight * 30;
+    const protein = Math.round(weight * 1.8);
+    const water = (weight * 0.035).toFixed(1);
 
-  window.scrollTo({
-    top: document.getElementById("result").offsetTop,
-    behavior: "smooth"
-  });
+    document.getElementById("bmi").textContent = bmi.toFixed(1);
+    document.getElementById("calories").textContent =
+      Math.round(calories) + " kcal";
+    document.getElementById("protein").textContent =
+      protein + " g";
+    document.getElementById("water").textContent =
+      water + " L";
+
+    document.getElementById("result").style.display = "block";
+
+    window.scrollTo({
+      top: document.getElementById("result").offsetTop,
+      behavior: "smooth"
+    });
+
+  } catch (error) {
+    alert("Greška: " + error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = "GENERIRAJ MOJ PLAN";
+  }
 }
 
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
