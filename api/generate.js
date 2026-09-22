@@ -18,9 +18,9 @@ export default async function handler(req, res) {
     } = req.body || {};
 
     const prompt = `
-Ti si GymGenie AI trener.
+Napravi personalizovani sedmodnevni fitness plan.
 
-Podaci korisnika:
+PODACI:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
@@ -30,27 +30,113 @@ Treninga sedmično: ${trainingDays}
 Mjesto treninga: ${location}
 Obroka dnevno: ${meals}
 
-Napravi KRATAK personalizovani plan za svih 7 dana.
+PRAVILA:
+- Mora biti TAČNO 7 dana: PONEDJELJAK, UTORAK, SRIJEDA, ČETVRTAK, PETAK, SUBOTA, NEDELJA.
+- Svaki dan mora biti označen kao TRENING ili ODMOR.
+- Ako je TRENING: navedi najviše 4 vježbe.
+- Za svaku vježbu navedi serije x ponavljanja.
+- Ako je ODMOR: napiši samo ODMOR i obroke.
+- Za svaki dan navedi obroke prema broju obroka korisnika.
+- Za svaki dan navedi okvirne kalorije, protein i vodu.
+- Na kraju navedi CILJ, KALORIJE, PROTEIN i VODU.
+- Bez uvoda.
+- Bez objašnjavanja vježbi.
+- Bez napomena.
+- Bez ponavljanja.
+- Ne ponavljaj instrukcije.
+- Nakon NEDELJE odmah završi odgovor.
+- Piši kratko, jasno i na srpskom/bosanskom jeziku.
 
-ZA SVAKI DAN:
-DAN - TRENING ili ODMOR
-- 3 do 5 vježbi ako je trening
-- serije x ponavljanja
-- obroci prema broju obroka
-- okvirne kalorije
-- protein
-- voda
+FORMAT:
 
-Bez uvoda.
-Bez objašnjenja vježbi.
-Budi kratak i praktičan.
-Piši na srpskom/bosanskom jeziku.
+PONEDJELJAK — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
 
-Na kraju:
-CILJ:
-KALORIJE:
-PROTEIN:
-VODA:
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+UTORKA — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
+
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+SRIJEDA — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
+
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+ČETVRTAK — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
+
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+PETAK — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
+
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+SUBOTA — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
+
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+NEDELJA — TRENING/ODMOR
+Vježbe:
+- vježba — serije x ponavljanja
+
+Obroci:
+- obrok
+- obrok
+
+Kalorije: ___ kcal
+Protein: ___ g
+Voda: ___ L
+
+CILJ: ___
+KALORIJE: ___ kcal
+PROTEIN: ___ g
+VODA: ___ L
 `;
 
     const response = await fetch(
@@ -66,7 +152,8 @@ VODA:
           messages: [
             {
               role: "system",
-              content: "You are GymGenie. Give short practical fitness plans."
+              content:
+                "You are GymGenie. Return only the requested 7-day fitness plan. Do not repeat instructions. Do not add text after Sunday."
             },
             {
               role: "user",
@@ -74,13 +161,12 @@ VODA:
             }
           ],
 
-          // BITNO: gasi GLM thinking da ne potroši sav output na reasoning
           chat_template_kwargs: {
             enable_thinking: false
           },
 
-          max_completion_tokens: 1800,
-          temperature: 0.5
+          max_completion_tokens: 1600,
+          temperature: 0.2
         })
       }
     );
@@ -106,8 +192,12 @@ VODA:
       plan = content;
     } else if (Array.isArray(content)) {
       plan = content
-        .filter(item => item?.type === "text" || typeof item === "string")
-        .map(item => typeof item === "string" ? item : item.text || "")
+        .filter(
+          item => item?.type === "text" || typeof item === "string"
+        )
+        .map(item =>
+          typeof item === "string" ? item : item.text || ""
+        )
         .join("");
     }
 
