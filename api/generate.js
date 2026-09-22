@@ -1,4 +1,6 @@
-export default async function handler(req, res) {
+const { json } = require("express");
+
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Koristi POST zahtjev."
@@ -139,8 +141,6 @@ TI SI GYMGENIE AI TRENER.
 
 VRATI ISKLJUČIVO VALIDAN JSON.
 NE PIŠI MARKDOWN.
-NE PIŠI ```json.
-NE PIŠI OBJAŠNJENJE.
 NE PIŠI TEKST IZVAN JSON-A.
 
 STRUKTURA:
@@ -150,20 +150,8 @@ STRUKTURA:
     {
       "day": "PONEDJELJAK",
       "type": "TRENING",
-      "exercises": [
-        {
-          "name": "Sklekovi",
-          "sets": 3,
-          "reps": "10",
-          "rest": "60 sekundi"
-        }
-      ],
-      "meals": [
-        {
-          "name": "Doručak",
-          "description": "Jaja, hljeb i jogurt"
-        }
-      ],
+      "exercises": [],
+      "meals": [],
       "calories": 2000,
       "protein": 130,
       "water": 2.5
@@ -196,8 +184,6 @@ NEDELJA
 - Ne mijenjaj broj obroka.
 - NEDELJA mora postojati.
 - Koristi samo dozvoljene vježbe.
-
-Kratki opisi obroka. Bez nepotrebnog teksta.
 `;
 
     const userPrompt = `
@@ -230,9 +216,9 @@ VRATI SAMO JSON.
 
     const controller = new AbortController();
 
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(function () {
       controller.abort();
-    }, 55000);
+    }, 50000);
 
     let response;
 
@@ -243,7 +229,7 @@ VRATI SAMO JSON.
           method: "POST",
           signal: controller.signal,
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: "Bearer " + token,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
@@ -269,7 +255,7 @@ VRATI SAMO JSON.
     } catch (error) {
       clearTimeout(timeout);
 
-      if (error?.name === "AbortError") {
+      if (error && error.name === "AbortError") {
         return res.status(504).json({
           error: "AI odgovor traje predugo. Pokušaj ponovo."
         });
@@ -288,31 +274,38 @@ VRATI SAMO JSON.
 
     try {
       data = JSON.parse(responseText);
-    } catch {
+    } catch (error) {
       return res.status(502).json({
-        error: "Cloudflare je vratio neispravan odgovor.",
-        details: responseText.slice(0, 500)
+        error: "Cloudflare je vratio neispravan odgovor."
       });
     }
 
     if (!response.ok) {
       return res.status(502).json({
         error:
-          data?.error?.message ||
-          data?.errors?.[0]?.message ||
+          (data &&
+            data.error &&
+            data.error.message) ||
           "Cloudflare AI greška."
       });
     }
 
-    let content = data?.choices?.[0]?.message?.content;
+    let content =
+      data &&
+      data.choices &&
+      data.choices[0] &&
+      data.choices[0].message &&
+      data.choices[0].message.content;
 
     if (Array.isArray(content)) {
       content = content
-        .map(item =>
-          typeof item === "string"
+        .map(function (item) {
+          return typeof item === "string"
             ? item
-            : item?.text || ""
-        )
+            : item && item.text
+              ? item.text
+              : "";
+        })
         .join("");
     }
 
@@ -345,7 +338,7 @@ VRATI SAMO JSON.
 
     try {
       plan = JSON.parse(clean);
-    } catch {
+    } catch (error) {
       return res.status(502).json({
         error: "AI je vratio neispravan JSON."
       });
@@ -378,7 +371,7 @@ VRATI SAMO JSON.
 
       if (!day || day.day !== expectedDays[i]) {
         return res.status(502).json({
-          error: `AI je pogrešno napravio dan ${i + 1}.`
+          error: "AI je pogrešno napravio dan " + (i + 1) + "."
         });
       }
 
@@ -389,7 +382,7 @@ VRATI SAMO JSON.
         (!shouldTrain && day.type !== "ODMOR")
       ) {
         return res.status(502).json({
-          error: `${day.day}: pogrešan tip dana.`
+          error: day.day + ": pogrešan tip dana."
         });
       }
 
@@ -401,23 +394,8 @@ VRATI SAMO JSON.
           day.exercises.length !== 4
         ) {
           return res.status(502).json({
-            error: `${day.day}: mora imati tačno 4 vježbe.`
+            error: day.day + ": mora imati tačno 4 vježbe."
           });
-        }
-
-        for (const exercise of day.exercises) {
-          if (
-            !exercise ||
-            typeof exercise !== "object" ||
-            typeof exercise.name !== "string" ||
-            typeof exercise.sets !== "number" ||
-            typeof exercise.reps !== "string" ||
-            typeof exercise.rest !== "string"
-          ) {
-            return res.status(502).json({
-              error: `${day.day}: neispravna vježba.`
-            });
-          }
         }
       } else {
         if (
@@ -425,7 +403,7 @@ VRATI SAMO JSON.
           day.exercises.length !== 0
         ) {
           return res.status(502).json({
-            error: `${day.day}: dan odmora ne smije imati vježbe.`
+            error: day.day + ": dan odmora ne smije imati vježbe."
           });
         }
       }
@@ -435,21 +413,8 @@ VRATI SAMO JSON.
         day.meals.length !== m
       ) {
         return res.status(502).json({
-          error: `${day.day}: mora imati tačno ${m} obroka.`
+          error: day.day + ": mora imati tačno " + m + " obroka."
         });
-      }
-
-      for (const meal of day.meals) {
-        if (
-          !meal ||
-          typeof meal !== "object" ||
-          typeof meal.name !== "string" ||
-          typeof meal.description !== "string"
-        ) {
-          return res.status(502).json({
-            error: `${day.day}: neispravan obrok.`
-          });
-        }
       }
 
       if (
@@ -458,14 +423,19 @@ VRATI SAMO JSON.
         typeof day.water !== "number"
       ) {
         return res.status(502).json({
-          error: `${day.day}: neispravne nutritivne vrijednosti.`
+          error: day.day + ": neispravne nutritivne vrijednosti."
         });
       }
     }
 
     if (trainingCount !== d) {
       return res.status(502).json({
-        error: `AI je napravio ${trainingCount} treninga umjesto ${d}.`
+        error:
+          "AI je napravio " +
+          trainingCount +
+          " treninga umjesto " +
+          d +
+          "."
       });
     }
 
@@ -473,19 +443,20 @@ VRATI SAMO JSON.
       plan: JSON.stringify(plan),
       stats: {
         bmi: Number(bmi.toFixed(1)),
-        calories,
-        protein,
-        water
+        calories: calories,
+        protein: protein,
+        water: water
       }
     });
-
   } catch (error) {
     console.error("GYMGENIE SERVER ERROR:", error);
 
     return res.status(500).json({
       error:
         "Greška servera: " +
-        (error?.message || "Nepoznata greška.")
+        (error && error.message
+          ? error.message
+          : "Nepoznata greška.")
     });
   }
-}
+};
