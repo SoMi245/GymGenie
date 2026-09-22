@@ -1,5 +1,3 @@
-const { json } = require("express");
-
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -8,22 +6,17 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const {
-      height,
-      weight,
-      age,
-      experience,
-      goal,
-      trainingDays,
-      location,
-      meals
-    } = req.body || {};
+    const body = req.body || {};
 
-    const h = Number(height);
-    const w = Number(weight);
-    const a = Number(age);
-    const d = Number(trainingDays);
-    const m = Number(meals);
+    const h = Number(body.height);
+    const w = Number(body.weight);
+    const a = Number(body.age);
+    const d = Number(body.trainingDays);
+    const m = Number(body.meals);
+
+    const experience = body.experience || "";
+    const goal = body.goal || "";
+    const location = body.location || "";
 
     if (
       !Number.isFinite(h) ||
@@ -69,6 +62,16 @@ module.exports = async function handler(req, res) {
     const protein = Math.round(w * 1.6);
     const water = Math.round(w * 0.035 * 10) / 10;
 
+    const allDays = [
+      "PONEDJELJAK",
+      "UTORAK",
+      "SRIJEDA",
+      "ČETVRTAK",
+      "PETAK",
+      "SUBOTA",
+      "NEDELJA"
+    ];
+
     const schedules = {
       1: ["PONEDJELJAK"],
       2: ["PONEDJELJAK", "ČETVRTAK"],
@@ -89,51 +92,81 @@ module.exports = async function handler(req, res) {
         "PETAK",
         "SUBOTA"
       ],
-      7: [
-        "PONEDJELJAK",
-        "UTORAK",
-        "SRIJEDA",
-        "ČETVRTAK",
-        "PETAK",
-        "SUBOTA",
-        "NEDELJA"
-      ]
+      7: allDays
     };
 
     const trainingSchedule = schedules[d];
 
-    let exerciseRules = "";
+    let exerciseRules;
 
     if (location === "Kuća - bez opreme") {
-      exerciseRules = `
-Sklekovi, sklekovi na koljenima, uski sklekovi,
-široki sklekovi, čučanj, iskorak, obrnuti iskorak,
-bugarski čučanj, glute bridge, podizanje na prste,
-plank, bočni plank, dead bug, bird dog,
-mountain climbers, jumping jacks, superman.
-NE KORISTI OPREMU.
-`;
+      exerciseRules = [
+        "Sklekovi",
+        "Sklekovi na koljenima",
+        "Uski sklekovi",
+        "Široki sklekovi",
+        "Čučanj",
+        "Iskorak",
+        "Obrnuti iskorak",
+        "Bugarski čučanj",
+        "Glute bridge",
+        "Podizanje na prste",
+        "Plank",
+        "Bočni plank",
+        "Dead bug",
+        "Bird dog",
+        "Mountain climbers",
+        "Jumping jacks",
+        "Superman"
+      ];
     } else if (location === "Kuća - osnovna oprema") {
-      exerciseRules = `
-Sklekovi, uski sklekovi, široki sklekovi, čučanj,
-goblet čučanj, iskorak, bugarski čučanj,
-rumunsko mrtvo dizanje sa bučicama,
-veslanje sa bučicom, potisak bučicama iznad glave,
-biceps pregib sa bučicama, triceps opružanje sa bučicom,
-glute bridge, podizanje na prste, plank,
-bočni plank, dead bug, bird dog, mountain climbers.
-`;
+      exerciseRules = [
+        "Sklekovi",
+        "Uski sklekovi",
+        "Široki sklekovi",
+        "Čučanj",
+        "Goblet čučanj",
+        "Iskorak",
+        "Bugarski čučanj",
+        "Rumunsko mrtvo dizanje sa bučicama",
+        "Veslanje sa bučicom",
+        "Potisak bučicama iznad glave",
+        "Biceps pregib sa bučicama",
+        "Triceps opružanje sa bučicom",
+        "Glute bridge",
+        "Podizanje na prste",
+        "Plank",
+        "Bočni plank",
+        "Dead bug",
+        "Bird dog",
+        "Mountain climbers"
+      ];
     } else {
-      exerciseRules = `
-Bench press, incline bench press, chest press,
-lat pulldown, zgibovi, veslanje na sajli,
-veslanje sa šipkom, shoulder press, lateral raise,
-biceps pregib, hammer pregib, triceps pushdown,
-čučanj sa šipkom, leg press,
-rumunsko mrtvo dizanje, iskorak, leg curl,
-leg extension, hip thrust, podizanje na prste,
-plank, cable crunch, hanging knee raise.
-`;
+      exerciseRules = [
+        "Bench press",
+        "Incline bench press",
+        "Chest press",
+        "Lat pulldown",
+        "Zgibovi",
+        "Veslanje na sajli",
+        "Veslanje sa šipkom",
+        "Shoulder press",
+        "Lateral raise",
+        "Biceps pregib",
+        "Hammer pregib",
+        "Triceps pushdown",
+        "Čučanj sa šipkom",
+        "Leg press",
+        "Rumunsko mrtvo dizanje",
+        "Iskorak",
+        "Leg curl",
+        "Leg extension",
+        "Hip thrust",
+        "Podizanje na prste",
+        "Plank",
+        "Cable crunch",
+        "Hanging knee raise"
+      ];
     }
 
     const systemPrompt = `
@@ -141,17 +174,31 @@ TI SI GYMGENIE AI TRENER.
 
 VRATI ISKLJUČIVO VALIDAN JSON.
 NE PIŠI MARKDOWN.
-NE PIŠI TEKST IZVAN JSON-A.
+NE PIŠI ```json.
+NE PIŠI OBJAŠNJENJE.
+NE PIŠI NIŠTA IZVAN JSON OBJEKTA.
 
-STRUKTURA:
+JSON MORA IMATI OVU STRUKTURU:
 
 {
   "days": [
     {
       "day": "PONEDJELJAK",
       "type": "TRENING",
-      "exercises": [],
-      "meals": [],
+      "exercises": [
+        {
+          "name": "Sklekovi",
+          "sets": 3,
+          "reps": "10",
+          "rest": "60 sekundi"
+        }
+      ],
+      "meals": [
+        {
+          "name": "Doručak",
+          "description": "Jaja, hljeb i jogurt"
+        }
+      ],
       "calories": 2000,
       "protein": 130,
       "water": 2.5
@@ -159,10 +206,10 @@ STRUKTURA:
   ]
 }
 
-OBAVEZNO:
+PRAVILA KOJA MORAŠ POŠTOVATI:
 
-- Tačno 7 dana.
-- Redoslijed:
+1. Mora postojati TAČNO 7 dana.
+2. Dani MORAJU biti ovim redom:
 PONEDJELJAK
 UTORAK
 SRIJEDA
@@ -171,37 +218,66 @@ PETAK
 SUBOTA
 NEDELJA
 
-- Tačno ${d} dana moraju biti TRENING.
-- Svi ostali dani moraju biti ODMOR.
-- ODMOR mora imati exercises: [].
-- TRENING mora imati tačno 4 vježbe.
-- Svaki dan mora imati tačno ${m} obroka.
-- Svaki obrok mora imati name i description.
-- Svaka vježba mora imati name, sets, reps i rest.
-- calories, protein i water moraju biti brojevi.
-- Ne dodaj dodatna polja.
-- Ne mijenjaj broj trening dana.
-- Ne mijenjaj broj obroka.
-- NEDELJA mora postojati.
-- Koristi samo dozvoljene vježbe.
+3. TAČNO ${d} dana moraju imati type "TRENING".
+4. Svi ostali dani moraju imati type "ODMOR".
+5. Dan "ODMOR" mora imati exercises: [].
+6. Svaki dan "TRENING" mora imati TAČNO 4 vježbe.
+7. Svaki dan mora imati TAČNO ${m} obroka.
+8. Svaki obrok mora imati samo:
+   name
+   description
+9. Svaka vježba mora imati samo:
+   name
+   sets
+   reps
+   rest
+10. calories mora biti broj.
+11. protein mora biti broj.
+12. water mora biti broj.
+13. Ne dodaj dodatna polja.
+14. Ne mijenjaj broj trening dana.
+15. Ne mijenjaj broj obroka.
+16. NEDELJA MORA POSTOJATI.
+17. Koristi samo dozvoljene vježbe.
+18. Za treninge koristi realne serije, ponavljanja i odmor.
+19. Obroci moraju biti različiti i realni.
+20. Vrati samo JSON.
 `;
 
     const userPrompt = `
-NAPRAVI PLAN:
+NAPRAVI PERSONALIZOVANI GYMGENIE PLAN.
 
-Visina: ${h} cm
-Težina: ${w} kg
-Godine: ${a}
-Iskustvo: ${experience}
-Cilj: ${goal}
-Treninga sedmično: ${d}
-Mjesto treninga: ${location}
-Obroka dnevno: ${m}
+VISINA:
+${h} cm
 
-DANI TRENINGA:
+TEŽINA:
+${w} kg
+
+GODINE:
+${a}
+
+ISKUSTVO:
+${experience}
+
+CILJ:
+${goal}
+
+TRENINGA SEDMIČNO:
+${d}
+
+MJESTO TRENINGA:
+${location}
+
+OBROKA DNEVNO:
+${m}
+
+DANI KOJI MORAJU BITI TRENING:
 ${trainingSchedule.join(", ")}
 
-OSTALI DANI SU ODMOR.
+DANI KOJI MORAJU BITI ODMOR:
+${allDays.filter(function(day) {
+  return !trainingSchedule.includes(day);
+}).join(", ") || "NEMA"}
 
 CILJNE VRIJEDNOSTI:
 Kalorije: ${calories}
@@ -209,14 +285,16 @@ Protein: ${protein} g
 Voda: ${water} L
 
 DOZVOLJENE VJEŽBE:
-${exerciseRules}
+${exerciseRules.join(", ")}
 
-VRATI SAMO JSON.
+NAPRAVI SVIH 7 DANA.
+
+VRATI ISKLJUČIVO JSON.
 `;
 
     const controller = new AbortController();
 
-    const timeout = setTimeout(function () {
+    const timeout = setTimeout(function() {
       controller.abort();
     }, 50000);
 
@@ -229,7 +307,7 @@ VRATI SAMO JSON.
           method: "POST",
           signal: controller.signal,
           headers: {
-            Authorization: "Bearer " + token,
+            "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
@@ -261,8 +339,10 @@ VRATI SAMO JSON.
         });
       }
 
+      console.error("CLOUDFLARE FETCH ERROR:", error);
+
       return res.status(502).json({
-        error: "Nije moguće povezati se sa AI servisom."
+        error: "Nije moguće povezati se sa Cloudflare AI servisom."
       });
     }
 
@@ -275,18 +355,23 @@ VRATI SAMO JSON.
     try {
       data = JSON.parse(responseText);
     } catch (error) {
+      console.error("CLOUDFLARE RAW RESPONSE:", responseText);
+
       return res.status(502).json({
         error: "Cloudflare je vratio neispravan odgovor."
       });
     }
 
     if (!response.ok) {
+      console.error("CLOUDFLARE ERROR:", data);
+
       return res.status(502).json({
         error:
-          (data &&
-            data.error &&
-            data.error.message) ||
-          "Cloudflare AI greška."
+          data &&
+          data.error &&
+          data.error.message
+            ? data.error.message
+            : "Cloudflare AI greška."
       });
     }
 
@@ -299,17 +384,24 @@ VRATI SAMO JSON.
 
     if (Array.isArray(content)) {
       content = content
-        .map(function (item) {
-          return typeof item === "string"
-            ? item
-            : item && item.text
-              ? item.text
-              : "";
+        .map(function(item) {
+          if (typeof item === "string") {
+            return item;
+          }
+
+          if (item && typeof item.text === "string") {
+            return item.text;
+          }
+
+          return "";
         })
         .join("");
     }
 
-    if (typeof content !== "string" || !content.trim()) {
+    if (
+      typeof content !== "string" ||
+      content.trim().length === 0
+    ) {
       return res.status(502).json({
         error: "AI nije vratio plan."
       });
@@ -327,6 +419,8 @@ VRATI SAMO JSON.
     const lastBrace = clean.lastIndexOf("}");
 
     if (firstBrace === -1 || lastBrace === -1) {
+      console.error("AI CONTENT:", clean);
+
       return res.status(502).json({
         error: "AI nije vratio validan JSON."
       });
@@ -339,6 +433,8 @@ VRATI SAMO JSON.
     try {
       plan = JSON.parse(clean);
     } catch (error) {
+      console.error("INVALID AI JSON:", clean);
+
       return res.status(502).json({
         error: "AI je vratio neispravan JSON."
       });
@@ -354,35 +450,40 @@ VRATI SAMO JSON.
       });
     }
 
-    const expectedDays = [
-      "PONEDJELJAK",
-      "UTORAK",
-      "SRIJEDA",
-      "ČETVRTAK",
-      "PETAK",
-      "SUBOTA",
-      "NEDELJA"
-    ];
-
     let trainingCount = 0;
 
     for (let i = 0; i < 7; i++) {
       const day = plan.days[i];
 
-      if (!day || day.day !== expectedDays[i]) {
+      if (!day || day.day !== allDays[i]) {
         return res.status(502).json({
-          error: "AI je pogrešno napravio dan " + (i + 1) + "."
+          error:
+            "AI je pogrešno napravio redoslijed dana."
         });
       }
 
-      const shouldTrain = trainingSchedule.includes(day.day);
+      const shouldTrain =
+        trainingSchedule.indexOf(day.day) !== -1;
 
       if (
-        (shouldTrain && day.type !== "TRENING") ||
-        (!shouldTrain && day.type !== "ODMOR")
+        shouldTrain &&
+        day.type !== "TRENING"
       ) {
         return res.status(502).json({
-          error: day.day + ": pogrešan tip dana."
+          error:
+            day.day +
+            " mora biti TRENING."
+        });
+      }
+
+      if (
+        !shouldTrain &&
+        day.type !== "ODMOR"
+      ) {
+        return res.status(502).json({
+          error:
+            day.day +
+            " mora biti ODMOR."
         });
       }
 
@@ -394,16 +495,44 @@ VRATI SAMO JSON.
           day.exercises.length !== 4
         ) {
           return res.status(502).json({
-            error: day.day + ": mora imati tačno 4 vježbe."
+            error:
+              day.day +
+              " mora imati tačno 4 vježbe."
           });
         }
-      } else {
+
+        for (
+          let j = 0;
+          j < day.exercises.length;
+          j++
+        ) {
+          const exercise = day.exercises[j];
+
+          if (
+            !exercise ||
+            typeof exercise.name !== "string" ||
+            typeof exercise.sets !== "number" ||
+            typeof exercise.reps !== "string" ||
+            typeof exercise.rest !== "string"
+          ) {
+            return res.status(502).json({
+              error:
+                day.day +
+                " ima neispravnu vježbu."
+            });
+          }
+        }
+      }
+
+      if (day.type === "ODMOR") {
         if (
           !Array.isArray(day.exercises) ||
           day.exercises.length !== 0
         ) {
           return res.status(502).json({
-            error: day.day + ": dan odmora ne smije imati vježbe."
+            error:
+              day.day +
+              " mora imati prazne exercises."
           });
         }
       }
@@ -413,8 +542,32 @@ VRATI SAMO JSON.
         day.meals.length !== m
       ) {
         return res.status(502).json({
-          error: day.day + ": mora imati tačno " + m + " obroka."
+          error:
+            day.day +
+            " mora imati tačno " +
+            m +
+            " obroka."
         });
+      }
+
+      for (
+        let j = 0;
+        j < day.meals.length;
+        j++
+      ) {
+        const meal = day.meals[j];
+
+        if (
+          !meal ||
+          typeof meal.name !== "string" ||
+          typeof meal.description !== "string"
+        ) {
+          return res.status(502).json({
+            error:
+              day.day +
+              " ima neispravan obrok."
+          });
+        }
       }
 
       if (
@@ -423,7 +576,9 @@ VRATI SAMO JSON.
         typeof day.water !== "number"
       ) {
         return res.status(502).json({
-          error: day.day + ": neispravne nutritivne vrijednosti."
+          error:
+            day.day +
+            " ima neispravne nutritivne vrijednosti."
         });
       }
     }
@@ -448,15 +603,22 @@ VRATI SAMO JSON.
         water: water
       }
     });
+
   } catch (error) {
-    console.error("GYMGENIE SERVER ERROR:", error);
+    console.error(
+      "GYMGENIE SERVER ERROR:",
+      error
+    );
 
     return res.status(500).json({
       error:
         "Greška servera: " +
-        (error && error.message
-          ? error.message
-          : "Nepoznata greška.")
+        (
+          error &&
+          error.message
+            ? error.message
+            : "Nepoznata greška."
+        )
     });
   }
 };
