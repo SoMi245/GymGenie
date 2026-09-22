@@ -1,13 +1,24 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Koristi POST." });
+    return res.status(405).json({
+      error: "Koristi POST zahtjev."
+    });
   }
 
   try {
-    const { height, weight, age, experience, goal, trainingDays, location, meals } = req.body || {};
+    const {
+      height,
+      weight,
+      age,
+      experience,
+      goal,
+      trainingDays,
+      location,
+      meals
+    } = req.body || {};
 
     const prompt = `
-Napravi kratak personalizovani fitness plan za 7 dana.
+Ti si GymGenie AI trener.
 
 Korisnik:
 Visina: ${height} cm
@@ -16,24 +27,23 @@ Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
 Treninga sedmično: ${trainingDays}
-Mjesto: ${location}
+Mjesto treninga: ${location}
 Obroka dnevno: ${meals}
 
-Za svaki od 7 dana napiši:
-DAN:
-TRENING ili ODMOR
-Vježbe sa serijama i ponavljanjima ako je trening
-Obroke
-Kalorije
-Protein
-Vodu
+Napravi KRATAK plan za svih 7 dana.
 
-Budi kratak. Bez uvoda i bez objašnjenja vježbi.
-Piši na srpskom/bosanskom.
+Za svaki dan napiši:
+DAN - TRENING ili ODMOR
+Ako je trening: 3 do 5 vježbi, serije i ponavljanja.
+Napiši i obroke, kalorije, protein i vodu.
+
+Bez dugog uvoda.
+Bez objašnjenja vježbi.
+Piši na srpskom/bosanskom jeziku.
 `;
 
     const response = await fetch(
-      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/v1/chat/completions",
+      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/run/@cf/zai-org/glm-4.7-flash",
       {
         method: "POST",
         headers: {
@@ -41,74 +51,52 @@ Piši na srpskom/bosanskom.
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "@cf/zai-org/glm-4.7-flash",
           messages: [
-            { role: "user", content: prompt }
-          ],
-          max_tokens: 1200
+            {
+              role: "system",
+              content: "You are GymGenie AI trainer."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ]
         })
       }
     );
 
-    const text = await response.text();
+    const data = await response.json();
 
     if (!response.ok) {
+      console.error("Cloudflare error:", data);
+
       return res.status(502).json({
-        error: "Cloudflare greška",
-        details: text
+        error:
+          data?.errors?.[0]?.message ||
+          "Cloudflare AI greška."
       });
     }
 
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      return res.status(502).json({
-        error: "Cloudflare nije vratio JSON.",
-        details: text
-      });
-    }
-
-    let plan = "";
-
-    // Cloudflare OpenAI format
-    if (data.choices && data.choices[0]) {
-      const choice = data.choices[0];
-
-      if (choice.message && typeof choice.message.content === "string") {
-        plan = choice.message.content;
-      }
-
-      if (!plan && typeof choice.text === "string") {
-        plan = choice.text;
-      }
-    }
-
-    // Cloudflare Workers AI format
-    if (!plan && data.result) {
-      if (typeof data.result.response === "string") {
-        plan = data.result.response;
-      }
-
-      if (typeof data.result.content === "string") {
-        plan = data.result.content;
-      }
-    }
+    const plan = data?.result?.response;
 
     if (!plan) {
+      console.error("Cloudflare response:", JSON.stringify(data));
+
       return res.status(502).json({
         error: "AI nije vratio plan.",
-        details: JSON.stringify(data)
+        debug: data
       });
     }
 
-    return res.status(200).json({ plan });
+    return res.status(200).json({
+      plan: plan
+    });
 
   } catch (error) {
+    console.error("Server error:", error);
+
     return res.status(500).json({
-      error: "Greška servera.",
-      details: error.message
+      error: "Greška servera: " + error.message
     });
   }
 }
