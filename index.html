@@ -22,19 +22,14 @@
       --bg: #07090d;
       --surface: #10131a;
       --surface-2: #151922;
-      --surface-3: #1a1f2a;
       --border: #252b36;
-
       --text: #f5f7fa;
       --muted: #8f98a7;
-
       --accent: #8b5cf6;
       --accent-2: #6d3eea;
-
       --green: #35d07f;
       --orange: #f5a524;
       --red: #ff6472;
-
       --radius: 20px;
     }
 
@@ -47,9 +42,7 @@
           transparent 35%
         ),
         var(--bg);
-
       color: var(--text);
-
       font-family:
         Inter,
         system-ui,
@@ -57,7 +50,6 @@
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
-
       padding: 24px 16px 70px;
     }
 
@@ -66,10 +58,6 @@
       max-width: 1050px;
       margin: 0 auto;
     }
-
-    /* =========================
-       HERO
-    ========================= */
 
     .hero {
       text-align: center;
@@ -94,40 +82,27 @@
       line-height: 1.7;
     }
 
-    /* =========================
-       GENERAL CARD
-    ========================= */
-
     .card {
       background: rgba(16, 19, 26, 0.96);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 25px;
       margin-bottom: 18px;
-      box-shadow:
-        0 18px 50px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
     }
 
     .section-title {
       display: flex;
       align-items: center;
       gap: 10px;
-
       font-size: 20px;
       font-weight: 900;
-
       margin-bottom: 21px;
     }
 
-    /* =========================
-       FORM
-    ========================= */
-
     .form-grid {
       display: grid;
-      grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
     }
 
@@ -147,138 +122,73 @@
     select {
       width: 100%;
       min-height: 52px;
-
       padding: 0 15px;
-
       border-radius: 14px;
       border: 1px solid var(--border);
-
       background: #0b0e14;
       color: var(--text);
-
       outline: none;
       font-size: 15px;
-
-      transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
     }
 
     input:focus,
     select:focus {
       border-color: var(--accent);
-
-      box-shadow:
-        0 0 0 3px rgba(139, 92, 246, 0.12);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
     }
 
     .generate-button {
       width: 100%;
       min-height: 60px;
-
       margin-top: 23px;
-
       border: 0;
       border-radius: 15px;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--accent),
-          var(--accent-2)
-        );
-
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: white;
-
       font-size: 15px;
       font-weight: 950;
       letter-spacing: 0.5px;
-
       cursor: pointer;
-
-      transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-    }
-
-    .generate-button:hover {
-      transform: translateY(-1px);
     }
 
     .generate-button:disabled {
       opacity: 0.65;
       cursor: wait;
-      transform: none;
     }
-
-    /* =========================
-       STATS
-    ========================= */
 
     .stats {
       display: grid;
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
 
     .stat {
       position: relative;
-
       background: var(--surface-2);
       border: 1px solid var(--border);
-
       border-radius: 17px;
       padding: 19px 15px;
-
       overflow: hidden;
-    }
-
-    .stat::after {
-      content: "";
-
-      position: absolute;
-      width: 65px;
-      height: 65px;
-
-      right: -25px;
-      bottom: -25px;
-
-      border-radius: 50%;
-
-      background:
-        rgba(139, 92, 246, 0.08);
     }
 
     .stat-label {
       color: var(--muted);
-
       font-size: 11px;
       font-weight: 800;
-
       text-transform: uppercase;
       letter-spacing: 0.8px;
     }
 
     .stat-value {
       margin-top: 8px;
-
       font-size: 23px;
       font-weight: 950;
-
-      letter-spacing: -0.5px;
     }
-
-    /* =========================
-       AI HEADER
-    ========================= */
 
     .ai-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       margin-bottom: 21px;
     }
 
@@ -291,13 +201,9 @@
     .ai-dot {
       width: 11px;
       height: 11px;
-
       border-radius: 50%;
-
       background: var(--green);
-
-      box-shadow:
-        0 0 16px rgba(53, 208, 127, 0.65);
+      box-shadow: 0 0 16px rgba(53, 208, 127, 0.65);
     }
 
     .ai-title {
@@ -308,30 +214,17 @@
 
     .ai-badge {
       padding: 7px 10px;
-
       border-radius: 999px;
-
-      background:
-        rgba(139, 92, 246, 0.1);
-
-      border:
-        1px solid rgba(139, 92, 246, 0.25);
-
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.25);
       color: #b99cff;
-
       font-size: 11px;
       font-weight: 900;
     }
 
-    /* =========================
-       LOADING
-    ========================= */
-
     .loading {
       display: none;
-
       text-align: center;
-
       padding: 45px 15px;
       color: var(--muted);
     }
@@ -339,19 +232,11 @@
     .spinner {
       width: 38px;
       height: 38px;
-
       margin: 0 auto 17px;
-
-      border:
-        3px solid #292f3b;
-
-      border-top-color:
-        var(--accent);
-
+      border: 3px solid #292f3b;
+      border-top-color: var(--accent);
       border-radius: 50%;
-
-      animation:
-        spin 0.8s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
@@ -359,10 +244,6 @@
         transform: rotate(360deg);
       }
     }
-
-    /* =========================
-       PLAN
-    ========================= */
 
     .plan {
       display: none;
@@ -372,23 +253,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       gap: 15px;
-
       margin-bottom: 18px;
-
       padding: 17px 18px;
-
       background:
         linear-gradient(
           135deg,
           rgba(139, 92, 246, 0.12),
           rgba(139, 92, 246, 0.04)
         );
-
-      border:
-        1px solid rgba(139, 92, 246, 0.2);
-
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-radius: 17px;
     }
 
@@ -403,20 +277,11 @@
       display: block;
     }
 
-    /* =========================
-       DAY CARD
-    ========================= */
-
     .day-card {
       background: var(--surface-2);
-
-      border:
-        1px solid var(--border);
-
+      border: 1px solid var(--border);
       border-radius: 20px;
-
       margin-bottom: 15px;
-
       overflow: hidden;
     }
 
@@ -424,16 +289,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       gap: 15px;
-
       padding: 18px 20px;
-
-      border-bottom:
-        1px solid var(--border);
-
-      background:
-        rgba(255, 255, 255, 0.015);
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.015);
     }
 
     .day-name {
@@ -443,32 +302,21 @@
 
     .day-badge {
       padding: 7px 11px;
-
       border-radius: 999px;
-
       font-size: 10px;
       font-weight: 950;
-
       letter-spacing: 0.5px;
     }
 
     .training-badge {
-      background:
-        rgba(53, 208, 127, 0.1);
-
-      border:
-        1px solid rgba(53, 208, 127, 0.2);
-
+      background: rgba(53, 208, 127, 0.1);
+      border: 1px solid rgba(53, 208, 127, 0.2);
       color: #66e69c;
     }
 
     .rest-badge {
-      background:
-        rgba(245, 165, 36, 0.1);
-
-      border:
-        1px solid rgba(245, 165, 36, 0.2);
-
+      background: rgba(245, 165, 36, 0.1);
+      border: 1px solid rgba(245, 165, 36, 0.2);
       color: #ffc15c;
     }
 
@@ -476,31 +324,19 @@
       padding: 20px;
     }
 
-    /* =========================
-       SECTION INSIDE DAY
-    ========================= */
-
     .inner-title {
       display: flex;
       align-items: center;
       gap: 8px;
-
       font-size: 13px;
       font-weight: 900;
-
       color: #cbd1db;
-
       margin-bottom: 12px;
     }
-
-    /* =========================
-       EXERCISES
-    ========================= */
 
     .exercise-list {
       display: grid;
       gap: 8px;
-
       margin-bottom: 21px;
     }
 
@@ -508,16 +344,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       gap: 12px;
-
       padding: 12px 14px;
-
       background: #0c0f15;
-
-      border:
-        1px solid var(--border);
-
+      border: 1px solid var(--border);
       border-radius: 12px;
     }
 
@@ -528,224 +358,142 @@
 
     .exercise-value {
       flex-shrink: 0;
-
       padding: 5px 8px;
-
       border-radius: 8px;
-
-      background:
-        rgba(139, 92, 246, 0.1);
-
+      background: rgba(139, 92, 246, 0.1);
       color: #c2aaff;
-
       font-size: 11px;
       font-weight: 900;
     }
 
-    /* =========================
-       MEALS
-    ========================= */
-
     .meal-grid {
       display: grid;
-
-      grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 9px;
     }
 
     .meal {
       padding: 13px 14px;
-
       background: #0c0f15;
-
-      border:
-        1px solid var(--border);
-
+      border: 1px solid var(--border);
       border-radius: 12px;
     }
 
     .meal-name {
       color: #a9b1be;
-
       font-size: 10px;
       font-weight: 900;
-
       text-transform: uppercase;
       letter-spacing: 0.5px;
-
       margin-bottom: 5px;
     }
 
     .meal-text {
       color: #e8ebf0;
-
       font-size: 12px;
       line-height: 1.55;
     }
 
-    /* =========================
-       DAILY VALUES
-    ========================= */
-
     .daily-values {
       display: grid;
-
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-
       margin-top: 17px;
     }
 
     .daily-value {
       text-align: center;
-
       padding: 11px 8px;
-
       border-radius: 11px;
-
-      background:
-        rgba(255, 255, 255, 0.025);
-
-      border:
-        1px solid var(--border);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border);
     }
 
     .daily-value-label {
       color: var(--muted);
-
       font-size: 9px;
       font-weight: 800;
-
       text-transform: uppercase;
     }
 
     .daily-value-number {
       margin-top: 4px;
-
       font-size: 12px;
       font-weight: 900;
     }
 
-    /* =========================
-       FINAL SUMMARY
-    ========================= */
-
     .summary-card {
       margin-top: 18px;
-
       padding: 20px;
-
       border-radius: 18px;
-
       background:
         linear-gradient(
           135deg,
           rgba(139, 92, 246, 0.13),
           rgba(139, 92, 246, 0.04)
         );
-
-      border:
-        1px solid rgba(139, 92, 246, 0.22);
+      border: 1px solid rgba(139, 92, 246, 0.22);
     }
 
     .summary-title {
       font-size: 15px;
       font-weight: 950;
-
       margin-bottom: 13px;
     }
 
     .summary-grid {
       display: grid;
-
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 9px;
     }
 
     .summary-item {
       padding: 12px;
-
       border-radius: 11px;
-
-      background:
-        rgba(0, 0, 0, 0.15);
+      background: rgba(0, 0, 0, 0.15);
     }
 
     .summary-label {
       color: var(--muted);
-
       font-size: 9px;
       font-weight: 800;
-
       text-transform: uppercase;
     }
 
     .summary-value {
       margin-top: 5px;
-
       font-size: 13px;
       font-weight: 950;
     }
 
-    /* =========================
-       ERROR
-    ========================= */
-
     .error {
       display: none;
-
       margin-top: 16px;
-
       padding: 14px 16px;
-
       border-radius: 13px;
-
-      background:
-        rgba(255, 95, 109, 0.08);
-
-      border:
-        1px solid rgba(255, 95, 109, 0.3);
-
+      background: rgba(255, 95, 109, 0.08);
+      border: 1px solid rgba(255, 95, 109, 0.3);
       color: #ff9da6;
-
       font-size: 14px;
       line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
-
-    /* =========================
-       FOOTER
-    ========================= */
 
     .footer {
       text-align: center;
-
       color: #626a77;
-
       font-size: 11px;
-
       margin-top: 28px;
     }
 
-    /* =========================
-       MOBILE
-    ========================= */
-
     @media (max-width: 700px) {
-
       body {
-        padding:
-          12px 10px 45px;
+        padding: 12px 10px 45px;
       }
 
       .hero {
-        padding:
-          25px 0 28px;
+        padding: 25px 0 28px;
       }
 
       .logo {
@@ -754,7 +502,6 @@
 
       .card {
         padding: 17px;
-
         border-radius: 17px;
       }
 
@@ -763,8 +510,7 @@
       }
 
       .stats {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .day-header {
@@ -779,14 +525,8 @@
         grid-template-columns: 1fr;
       }
 
-      .daily-values {
-        grid-template-columns:
-          repeat(3, minmax(0, 1fr));
-      }
-
       .summary-grid {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .plan-intro {
@@ -796,11 +536,6 @@
     }
 
     @media (max-width: 400px) {
-
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
       .daily-values {
         grid-template-columns: 1fr;
       }
@@ -819,920 +554,1087 @@
 
 <body>
 
-  <main class="container">
+<main class="container">
 
-    <section class="hero">
-
-      <div class="logo">
-        Gym<span>Genie</span>
-      </div>
-
-      <p class="subtitle">
-        Tvoj AI personalni trener za trening i ishranu.
-        <br />
-        Unesi podatke i napravi personalizovan plan za svih 7 dana.
-      </p>
-
-    </section>
-
-    <!-- =========================
-         INPUT
-    ========================= -->
-
-    <section class="card">
-
-      <h2 class="section-title">
-        👤 Tvoji podaci
-      </h2>
-
-      <form id="gymForm">
-
-        <div class="form-grid">
-
-          <div class="field">
-            <label for="height">
-              Visina (cm)
-            </label>
-
-            <input
-              id="height"
-              type="number"
-              min="100"
-              max="230"
-              placeholder="npr. 180"
-              required
-            />
-          </div>
-
-          <div class="field">
-            <label for="weight">
-              Težina (kg)
-            </label>
-
-            <input
-              id="weight"
-              type="number"
-              min="30"
-              max="250"
-              step="0.1"
-              placeholder="npr. 80"
-              required
-            />
-          </div>
-
-          <div class="field">
-            <label for="age">
-              Godine
-            </label>
-
-            <input
-              id="age"
-              type="number"
-              min="13"
-              max="100"
-              placeholder="npr. 20"
-              required
-            />
-          </div>
-
-          <div class="field">
-            <label for="experience">
-              Iskustvo
-            </label>
-
-            <select id="experience" required>
-              <option value="Početnik">Početnik</option>
-              <option value="Srednji nivo">Srednji nivo</option>
-              <option value="Napredni nivo">Napredni nivo</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="goal">
-              Cilj
-            </label>
-
-            <select id="goal" required>
-              <option value="Mršavljenje">Mršavljenje</option>
-              <option value="Održavanje težine">
-                Održavanje težine
-              </option>
-              <option value="Dobijanje mišićne mase">
-                Dobijanje mišićne mase
-              </option>
-              <option value="Povećanje snage">
-                Povećanje snage
-              </option>
-              <option value="Bolja kondicija">
-                Bolja kondicija
-              </option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="trainingDays">
-              Treninga sedmično
-            </label>
-
-            <select id="trainingDays" required>
-              <option value="1">1 dan</option>
-              <option value="2">2 dana</option>
-              <option value="3" selected>3 dana</option>
-              <option value="4">4 dana</option>
-              <option value="5">5 dana</option>
-              <option value="6">6 dana</option>
-              <option value="7">7 dana</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="location">
-              Mjesto treninga
-            </label>
-
-            <select id="location" required>
-              <option value="Teretana">
-                Teretana
-              </option>
-
-              <option value="Kuća - bez opreme">
-                Kuća - bez opreme
-              </option>
-
-              <option value="Kuća - osnovna oprema">
-                Kuća - osnovna oprema
-              </option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="meals">
-              Obroka dnevno
-            </label>
-
-            <select id="meals" required>
-              <option value="2">2 obroka</option>
-              <option value="3" selected>3 obroka</option>
-              <option value="4">4 obroka</option>
-              <option value="5">5 obroka</option>
-              <option value="6">6 obroka</option>
-            </select>
-          </div>
-
-        </div>
-
-        <button
-          type="submit"
-          id="generateButton"
-          class="generate-button"
-        >
-          GENERIRAJ MOJ PLAN
-        </button>
-
-      </form>
-
-      <div
-        id="error"
-        class="error"
-        role="alert"
-      ></div>
-
-    </section>
-
-    <!-- =========================
-         STATS
-    ========================= -->
-
-    <section
-      id="statsCard"
-      class="card"
-      style="display: none;"
-    >
-
-      <h2 class="section-title">
-        📊 Tvoje osnovne vrijednosti
-      </h2>
-
-      <div class="stats">
-
-        <div class="stat">
-          <div class="stat-label">BMI</div>
-
-          <div
-            class="stat-value"
-            id="bmi"
-          >
-            —
-          </div>
-        </div>
-
-        <div class="stat">
-          <div class="stat-label">Kalorije</div>
-
-          <div
-            class="stat-value"
-            id="calories"
-          >
-            —
-          </div>
-        </div>
-
-        <div class="stat">
-          <div class="stat-label">Protein</div>
-
-          <div
-            class="stat-value"
-            id="protein"
-          >
-            —
-          </div>
-        </div>
-
-        <div class="stat">
-          <div class="stat-label">Voda</div>
-
-          <div
-            class="stat-value"
-            id="water"
-          >
-            —
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- =========================
-         AI RESULT
-    ========================= -->
-
-    <section
-      id="resultCard"
-      class="card"
-      style="display: none;"
-    >
-
-      <div class="ai-header">
-
-        <div class="ai-brand">
-
-          <div class="ai-dot"></div>
-
-          <div class="ai-title">
-            GYMGENIE AI
-          </div>
-
-        </div>
-
-        <div class="ai-badge">
-          PERSONALIZOVANO
-        </div>
-
-      </div>
-
-      <div
-        id="loading"
-        class="loading"
-      >
-
-        <div class="spinner"></div>
-
-        <strong>
-          🤖 AI pravi tvoj personalizovani plan...
-        </strong>
-
-        <p style="margin-top: 8px;">
-          Analiziram tvoje podatke i pripremam svih 7 dana.
-        </p>
-
-      </div>
-
-      <div
-        id="plan"
-        class="plan"
-      ></div>
-
-    </section>
-
-    <div class="footer">
-      GymGenie AI • Personalizovani fitness planner
+  <section class="hero">
+    <div class="logo">
+      Gym<span>Genie</span>
     </div>
 
-  </main>
+    <p class="subtitle">
+      Tvoj AI personalni trener za trening i ishranu.
+      <br />
+      Unesi podatke i napravi personalizovan plan za svih 7 dana.
+    </p>
+  </section>
 
-  <script>
-    const form =
-      document.getElementById("gymForm");
+  <section class="card">
 
-    const button =
-      document.getElementById("generateButton");
+    <h2 class="section-title">
+      👤 Tvoji podaci
+    </h2>
 
-    const resultCard =
-      document.getElementById("resultCard");
+    <form id="gymForm">
 
-    const loading =
-      document.getElementById("loading");
+      <div class="form-grid">
 
-    const planElement =
-      document.getElementById("plan");
+        <div class="field">
+          <label for="height">Visina (cm)</label>
+          <input
+            id="height"
+            type="number"
+            min="100"
+            max="230"
+            placeholder="npr. 180"
+            required
+          />
+        </div>
 
-    const statsCard =
-      document.getElementById("statsCard");
+        <div class="field">
+          <label for="weight">Težina (kg)</label>
+          <input
+            id="weight"
+            type="number"
+            min="30"
+            max="250"
+            step="0.1"
+            placeholder="npr. 80"
+            required
+          />
+        </div>
 
-    const bmiElement =
-      document.getElementById("bmi");
+        <div class="field">
+          <label for="age">Godine</label>
+          <input
+            id="age"
+            type="number"
+            min="13"
+            max="100"
+            placeholder="npr. 20"
+            required
+          />
+        </div>
 
-    const caloriesElement =
-      document.getElementById("calories");
+        <div class="field">
+          <label for="experience">Iskustvo</label>
+          <select id="experience" required>
+            <option value="Početnik">Početnik</option>
+            <option value="Srednji nivo">Srednji nivo</option>
+            <option value="Napredni nivo">Napredni nivo</option>
+          </select>
+        </div>
 
-    const proteinElement =
-      document.getElementById("protein");
+        <div class="field">
+          <label for="goal">Cilj</label>
+          <select id="goal" required>
+            <option value="Mršavljenje">Mršavljenje</option>
+            <option value="Održavanje težine">
+              Održavanje težine
+            </option>
+            <option value="Dobijanje mišićne mase">
+              Dobijanje mišićne mase
+            </option>
+            <option value="Povećanje snage">
+              Povećanje snage
+            </option>
+            <option value="Bolja kondicija">
+              Bolja kondicija
+            </option>
+          </select>
+        </div>
 
-    const waterElement =
-      document.getElementById("water");
+        <div class="field">
+          <label for="trainingDays">
+            Treninga sedmično
+          </label>
 
-    const errorElement =
-      document.getElementById("error");
+          <select id="trainingDays" required>
+            <option value="1">1 dan</option>
+            <option value="2">2 dana</option>
+            <option value="3" selected>3 dana</option>
+            <option value="4">4 dana</option>
+            <option value="5">5 dana</option>
+            <option value="6">6 dana</option>
+            <option value="7">7 dana</option>
+          </select>
+        </div>
 
-    form.addEventListener(
-      "submit",
-      generatePlan
-    );
+        <div class="field">
+          <label for="location">
+            Mjesto treninga
+          </label>
 
-    async function generatePlan(event) {
+          <select id="location" required>
+            <option value="Teretana">
+              Teretana
+            </option>
 
-      event.preventDefault();
+            <option value="Kuća - bez opreme">
+              Kuća - bez opreme
+            </option>
 
-      errorElement.style.display = "none";
+            <option value="Kuća - osnovna oprema">
+              Kuća - osnovna oprema
+            </option>
+          </select>
+        </div>
 
-      planElement.style.display = "none";
+        <div class="field">
+          <label for="meals">
+            Obroka dnevno
+          </label>
 
-      statsCard.style.display = "none";
+          <select id="meals" required>
+            <option value="2">2 obroka</option>
+            <option value="3" selected>3 obroka</option>
+            <option value="4">4 obroka</option>
+            <option value="5">5 obroka</option>
+            <option value="6">6 obroka</option>
+          </select>
+        </div>
 
-      resultCard.style.display = "block";
+      </div>
 
-      loading.style.display = "block";
+      <button
+        type="submit"
+        id="generateButton"
+        class="generate-button"
+      >
+        GENERIRAJ MOJ PLAN
+      </button>
 
-      button.disabled = true;
+    </form>
 
-      button.textContent =
-        "AI PRAVI TVOJ PLAN...";
+    <div
+      id="error"
+      class="error"
+      role="alert"
+    ></div>
 
-      const payload = {
+  </section>
 
-        height:
-          document.getElementById("height").value,
+  <section
+    id="statsCard"
+    class="card"
+    style="display:none;"
+  >
 
-        weight:
-          document.getElementById("weight").value,
+    <h2 class="section-title">
+      📊 Tvoje osnovne vrijednosti
+    </h2>
 
-        age:
-          document.getElementById("age").value,
+    <div class="stats">
 
-        experience:
-          document.getElementById("experience").value,
+      <div class="stat">
+        <div class="stat-label">BMI</div>
+        <div class="stat-value" id="bmi">—</div>
+      </div>
 
-        goal:
-          document.getElementById("goal").value,
+      <div class="stat">
+        <div class="stat-label">Kalorije</div>
+        <div class="stat-value" id="calories">—</div>
+      </div>
 
-        trainingDays:
-          document.getElementById("trainingDays").value,
+      <div class="stat">
+        <div class="stat-label">Protein</div>
+        <div class="stat-value" id="protein">—</div>
+      </div>
 
-        location:
-          document.getElementById("location").value,
+      <div class="stat">
+        <div class="stat-label">Voda</div>
+        <div class="stat-value" id="water">—</div>
+      </div>
 
-        meals:
-          document.getElementById("meals").value
-      };
+    </div>
 
-      try {
+  </section>
 
-        const response =
-          await fetch(
-            "/api/generate",
-            {
-              method: "POST",
+  <section
+    id="resultCard"
+    class="card"
+    style="display:none;"
+  >
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+    <div class="ai-header">
 
-              body:
-                JSON.stringify(payload)
-            }
-          );
+      <div class="ai-brand">
+        <div class="ai-dot"></div>
 
-        const data =
-          await response.json();
+        <div class="ai-title">
+          GYMGENIE AI
+        </div>
+      </div>
 
-        if (!response.ok) {
+      <div class="ai-badge">
+        PERSONALIZOVANO
+      </div>
 
-          throw new Error(
-            data.error ||
-            "Greška pri generisanju plana."
-          );
-        }
+    </div>
 
-        if (!data.plan) {
+    <div
+      id="loading"
+      class="loading"
+    >
 
-          throw new Error(
-            "AI nije vratio plan."
-          );
-        }
+      <div class="spinner"></div>
 
-        if (data.stats) {
+      <strong>
+        🤖 AI pravi tvoj personalizovani plan...
+      </strong>
 
-          bmiElement.textContent =
-            Number(
-              data.stats.bmi
-            ).toFixed(1);
+      <p style="margin-top:8px;">
+        Analiziram tvoje podatke i pripremam svih 7 dana.
+      </p>
 
-          caloriesElement.textContent =
-            `${data.stats.calories} kcal`;
+    </div>
 
-          proteinElement.textContent =
-            `${data.stats.protein} g`;
+    <div
+      id="plan"
+      class="plan"
+    ></div>
 
-          waterElement.textContent =
-            `${data.stats.water} L`;
+  </section>
 
-          statsCard.style.display =
-            "block";
-        }
+  <div class="footer">
+    GymGenie AI • Personalizovani fitness planner
+  </div>
 
-        renderPlan(
-          data.plan
+</main>
+
+<script>
+  const form =
+    document.getElementById("gymForm");
+
+  const button =
+    document.getElementById("generateButton");
+
+  const resultCard =
+    document.getElementById("resultCard");
+
+  const loading =
+    document.getElementById("loading");
+
+  const planElement =
+    document.getElementById("plan");
+
+  const statsCard =
+    document.getElementById("statsCard");
+
+  const bmiElement =
+    document.getElementById("bmi");
+
+  const caloriesElement =
+    document.getElementById("calories");
+
+  const proteinElement =
+    document.getElementById("protein");
+
+  const waterElement =
+    document.getElementById("water");
+
+  const errorElement =
+    document.getElementById("error");
+
+  form.addEventListener(
+    "submit",
+    generatePlan
+  );
+
+  async function generatePlan(event) {
+    event.preventDefault();
+
+    errorElement.style.display = "none";
+    planElement.style.display = "none";
+    statsCard.style.display = "none";
+
+    resultCard.style.display = "block";
+    loading.style.display = "block";
+
+    button.disabled = true;
+    button.textContent = "AI PRAVI TVOJ PLAN...";
+
+    const payload = {
+      height:
+        document.getElementById("height").value,
+
+      weight:
+        document.getElementById("weight").value,
+
+      age:
+        document.getElementById("age").value,
+
+      experience:
+        document.getElementById("experience").value,
+
+      goal:
+        document.getElementById("goal").value,
+
+      trainingDays:
+        document.getElementById("trainingDays").value,
+
+      location:
+        document.getElementById("location").value,
+
+      meals:
+        document.getElementById("meals").value
+    };
+
+    try {
+      const response =
+        await fetch(
+          "/api/generate",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(payload)
+          }
         );
 
-        resultCard.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+      /*
+       * VAŽNO:
+       * Ne koristimo response.json()
+       * jer Vercel ponekad vrati običan tekst.
+       */
 
-      } catch (error) {
+      const responseText =
+        await response.text();
 
-        errorElement.textContent =
-          error.message ||
-          "Došlo je do greške.";
+      let data = null;
 
-        errorElement.style.display =
-          "block";
+      try {
+        data =
+          responseText
+            ? JSON.parse(responseText)
+            : null;
+      } catch (parseError) {
+        console.error(
+          "RAW SERVER RESPONSE:",
+          responseText
+        );
 
-      } finally {
-
-        loading.style.display =
-          "none";
-
-        button.disabled =
-          false;
-
-        button.textContent =
-          "GENERIRAJ MOJ PLAN";
+        throw new Error(
+          responseText ||
+          "Server je vratio neispravan odgovor."
+        );
       }
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ||
+          `Server greška (${response.status}).`
+        );
+      }
+
+      if (!data) {
+        throw new Error(
+          "Server nije vratio podatke."
+        );
+      }
+
+      if (!data.plan) {
+        throw new Error(
+          "AI nije vratio plan."
+        );
+      }
+
+      if (data.stats) {
+        bmiElement.textContent =
+          Number(
+            data.stats.bmi
+          ).toFixed(1);
+
+        caloriesElement.textContent =
+          `${data.stats.calories} kcal`;
+
+        proteinElement.textContent =
+          `${data.stats.protein} g`;
+
+        waterElement.textContent =
+          `${data.stats.water} L`;
+
+        statsCard.style.display =
+          "block";
+      }
+
+      renderPlan(data.plan);
+
+      resultCard.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    } catch (error) {
+
+      console.error(
+        "GymGenie error:",
+        error
+      );
+
+      errorElement.textContent =
+        error?.message ||
+        "Došlo je do greške.";
+
+      errorElement.style.display =
+        "block";
+
+    } finally {
+
+      loading.style.display =
+        "none";
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "GENERIRAJ MOJ PLAN";
+    }
+  }
+
+  function renderPlan(rawPlan) {
+
+    let planData = null;
+
+    /*
+     * NOVI JSON FORMAT
+     */
+
+    try {
+      if (
+        typeof rawPlan === "string"
+      ) {
+        planData =
+          JSON.parse(rawPlan);
+      } else if (
+        rawPlan &&
+        typeof rawPlan === "object"
+      ) {
+        planData = rawPlan;
+      }
+    } catch (error) {
+      planData = null;
     }
 
     /*
-      =========================
-      PARSIRANJE AI PLANA
-      =========================
-    */
+     * Ako je novi JSON uspješan,
+     * koristi strukturirani prikaz.
+     */
 
-    function renderPlan(rawPlan) {
+    if (
+      planData &&
+      Array.isArray(planData.days)
+    ) {
+      renderJsonPlan(planData);
+      return;
+    }
 
-      const lines =
-        rawPlan
-          .replace(/\r/g, "")
-          .split("\n")
-          .map(line => line.trim())
-          .filter(Boolean);
+    /*
+     * Fallback za stari tekstualni format.
+     */
 
-      const days = [];
+    renderOldTextPlan(
+      String(rawPlan || "")
+    );
+  }
 
-      let currentDay = null;
+  function renderJsonPlan(planData) {
 
-      for (const line of lines) {
+    const days =
+      planData.days || [];
 
-        const dayMatch =
-          line.match(
-            /^(PONEDJELJAK|UTORAK|SRIJEDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s*[—-]\s*(TRENING|ODMOR)/i
-          );
+    if (!days.length) {
+      throw new Error(
+        "Plan nema dane."
+      );
+    }
 
-        if (dayMatch) {
+    let html = "";
 
-          currentDay = {
-            name:
-              dayMatch[1].toUpperCase(),
+    html += `
+      <div class="plan-intro">
+        <div>
+          <strong>
+            Tvoj personalizovani 7-dnevni plan
+          </strong>
 
-            type:
-              dayMatch[2].toUpperCase(),
+          <span>
+            Trening + ishrana prilagođeni tvojim podacima
+          </span>
+        </div>
 
-            exercises: [],
+        <div class="ai-badge">
+          7 DANA
+        </div>
+      </div>
+    `;
 
-            meals: [],
+    for (const day of days) {
 
-            calories: "",
-            protein: "",
-            water: ""
-          };
+      const isTraining =
+        day.type === "TRENING";
 
-          days.push(currentDay);
+      html += `
+        <article class="day-card">
 
-          continue;
-        }
+          <div class="day-header">
 
-        if (!currentDay) {
-          continue;
-        }
+            <div class="day-name">
+              ${escapeHtml(day.day)}
+            </div>
 
-        const exerciseMatch =
-          line.match(
-            /^-\s*(.+?)\s*[—-]\s*(\d+\s*x\s*.+)$/i
-          );
+            <div class="day-badge ${
+              isTraining
+                ? "training-badge"
+                : "rest-badge"
+            }">
+              ${
+                isTraining
+                  ? "TRENING"
+                  : "ODMOR"
+              }
+            </div>
 
-        if (
-          exerciseMatch &&
-          currentDay.type === "TRENING"
+          </div>
+
+          <div class="day-content">
+      `;
+
+      if (
+        isTraining &&
+        Array.isArray(day.exercises)
+      ) {
+
+        html += `
+          <div class="inner-title">
+            🏋️ VJEŽBE
+          </div>
+
+          <div class="exercise-list">
+        `;
+
+        for (
+          const exercise
+          of day.exercises
         ) {
 
-          currentDay.exercises.push({
-            name:
-              exerciseMatch[1].trim(),
+          const value =
+            `${exercise.sets} x ${exercise.reps} • Odmor ${exercise.rest}`;
 
-            value:
-              exerciseMatch[2].trim()
-          });
+          html += `
+            <div class="exercise">
 
-          continue;
+              <div class="exercise-name">
+                ${escapeHtml(
+                  exercise.name
+                )}
+              </div>
+
+              <div class="exercise-value">
+                ${escapeHtml(value)}
+              </div>
+
+            </div>
+          `;
         }
 
-        const mealMatch =
-          line.match(
-            /^-\s*(Doručak|Obrok\s+[2-6])\s*:\s*(.+)$/i
-          );
+        html += `
+          </div>
+        `;
+      }
 
-        if (mealMatch) {
+      if (
+        Array.isArray(day.meals) &&
+        day.meals.length
+      ) {
 
-          currentDay.meals.push({
-            name:
-              mealMatch[1],
+        html += `
+          <div class="inner-title">
+            🍽️ ISHRANA
+          </div>
 
-            text:
-              mealMatch[2]
-          });
+          <div class="meal-grid">
+        `;
 
-          continue;
+        for (
+          const meal
+          of day.meals
+        ) {
+
+          html += `
+            <div class="meal">
+
+              <div class="meal-name">
+                ${escapeHtml(
+                  meal.name
+                )}
+              </div>
+
+              <div class="meal-text">
+                ${escapeHtml(
+                  meal.description
+                )}
+              </div>
+
+            </div>
+          `;
         }
 
-        const caloriesMatch =
-          line.match(
-            /^Kalorije:\s*(.+)$/i
-          );
+        html += `
+          </div>
+        `;
+      }
 
-        if (caloriesMatch) {
-          currentDay.calories =
-            caloriesMatch[1];
-          continue;
-        }
+      html += `
+          <div class="daily-values">
 
-        const proteinMatch =
-          line.match(
-            /^Protein:\s*(.+)$/i
-          );
+            <div class="daily-value">
+              <div class="daily-value-label">
+                Kalorije
+              </div>
 
-        if (proteinMatch) {
-          currentDay.protein =
-            proteinMatch[1];
-          continue;
-        }
+              <div class="daily-value-number">
+                ${escapeHtml(
+                  `${day.calories} kcal`
+                )}
+              </div>
+            </div>
 
-        const waterMatch =
-          line.match(
-            /^Voda:\s*(.+)$/i
-          );
+            <div class="daily-value">
+              <div class="daily-value-label">
+                Protein
+              </div>
+
+              <div class="daily-value-number">
+                ${escapeHtml(
+                  `${day.protein} g`
+                )}
+              </div>
+            </div>
+
+            <div class="daily-value">
+              <div class="daily-value-label">
+                Voda
+              </div>
+
+              <div class="daily-value-number">
+                ${escapeHtml(
+                  `${day.water} L`
+                )}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </article>
+      `;
+    }
+
+    const goal =
+      document.getElementById("goal");
+
+    const goalText =
+      goal
+        ? goal.value
+        : "—";
+
+    html += `
+      <div class="summary-card">
+
+        <div class="summary-title">
+          🎯 DNEVNI CILJEVI
+        </div>
+
+        <div class="summary-grid">
+
+          <div class="summary-item">
+            <div class="summary-label">
+              Cilj
+            </div>
+
+            <div class="summary-value">
+              ${escapeHtml(goalText)}
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">
+              Kalorije
+            </div>
+
+            <div class="summary-value">
+              ${escapeHtml(
+                caloriesElement.textContent
+              )}
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">
+              Protein
+            </div>
+
+            <div class="summary-value">
+              ${escapeHtml(
+                proteinElement.textContent
+              )}
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">
+              Voda
+            </div>
+
+            <div class="summary-value">
+              ${escapeHtml(
+                waterElement.textContent
+              )}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    planElement.innerHTML =
+      html;
+
+    planElement.style.display =
+      "block";
+  }
+
+  function renderOldTextPlan(rawPlan) {
+
+    const lines =
+      rawPlan
+        .replace(/\r/g, "")
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean);
+
+    const days = [];
+
+    let currentDay = null;
+
+    for (const line of lines) {
+
+      const dayMatch =
+        line.match(
+          /^(PONEDJELJAK|UTORAK|SRIJEDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s*[—-]\s*(TRENING|ODMOR)/i
+        );
+
+      if (dayMatch) {
+
+        currentDay = {
+          name:
+            dayMatch[1].toUpperCase(),
+
+          type:
+            dayMatch[2].toUpperCase(),
+
+          exercises: [],
+
+          meals: [],
+
+          calories: "",
+          protein: "",
+          water: ""
+        };
+
+        days.push(currentDay);
+
+        continue;
+      }
+
+      if (!currentDay) {
+        continue;
+      }
+
+      const exerciseMatch =
+        line.match(
+          /^-\s*(.+?)\s*[—-]\s*(\d+\s*x\s*.+)$/i
+        );
+
+      if (
+        exerciseMatch &&
+        currentDay.type === "TRENING"
+      ) {
+
+        currentDay.exercises.push({
+          name:
+            exerciseMatch[1].trim(),
+
+          value:
+            exerciseMatch[2].trim()
+        });
+
+        continue;
+      }
+
+      const mealMatch =
+        line.match(
+          /^-\s*(Doručak|Obrok\s+[2-6])\s*:\s*(.+)$/i
+        );
+
+      if (mealMatch) {
+
+        currentDay.meals.push({
+          name:
+            mealMatch[1],
+
+          text:
+            mealMatch[2]
+        });
+
+        continue;
+      }
+
+      const caloriesMatch =
+        line.match(
+          /^Kalorije:\s*(.+)$/i
+        );
+
+      if (caloriesMatch) {
+        currentDay.calories =
+          caloriesMatch[1];
+
+        continue;
+      }
+
+      const proteinMatch =
+        line.match(
+          /^Protein:\s*(.+)$/i
+        );
+
+      if (proteinMatch) {
+        currentDay.protein =
+          proteinMatch[1];
+
+        continue;
+      }
+
+      const waterMatch =
+        line.match(
+          /^Voda:\s*(.+)$/i
+        );
 
         if (waterMatch) {
           currentDay.water =
             waterMatch[1];
-          continue;
         }
-      }
+    }
 
-      if (!days.length) {
+    if (!days.length) {
 
-        planElement.textContent =
-          rawPlan;
+      throw new Error(
+        "AI nije vratio prepoznatljiv plan."
+      );
+    }
 
-        planElement.style.display =
-          "block";
+    let html = "";
 
-        return;
-      }
+    html += `
+      <div class="plan-intro">
+        <div>
+          <strong>
+            Tvoj personalizovani 7-dnevni plan
+          </strong>
 
-      let html = "";
+          <span>
+            Trening + ishrana prilagođeni tvojim podacima
+          </span>
+        </div>
+
+        <div class="ai-badge">
+          7 DANA
+        </div>
+      </div>
+    `;
+
+    for (const day of days) {
+
+      const isTraining =
+        day.type === "TRENING";
 
       html += `
-        <div class="plan-intro">
-          <div>
-            <strong>
-              Tvoj personalizovani 7-dnevni plan
-            </strong>
+        <article class="day-card">
 
-            <span>
-              Trening + ishrana prilagođeni tvojim podacima
-            </span>
-          </div>
+          <div class="day-header">
 
-          <div class="ai-badge">
-            7 DANA
-          </div>
-        </div>
-      `;
-
-      for (const day of days) {
-
-        const isTraining =
-          day.type === "TRENING";
-
-        html += `
-          <article class="day-card">
-
-            <div class="day-header">
-
-              <div class="day-name">
-                ${escapeHtml(day.name)}
-              </div>
-
-              <div class="day-badge ${
-                isTraining
-                  ? "training-badge"
-                  : "rest-badge"
-              }">
-                ${
-                  isTraining
-                    ? "TRENING"
-                    : "ODMOR"
-                }
-              </div>
-
+            <div class="day-name">
+              ${escapeHtml(day.name)}
             </div>
 
-            <div class="day-content">
+            <div class="day-badge ${
+              isTraining
+                ? "training-badge"
+                : "rest-badge"
+            }">
+              ${
+                isTraining
+                  ? "TRENING"
+                  : "ODMOR"
+              }
+            </div>
+
+          </div>
+
+          <div class="day-content">
+      `;
+
+      if (
+        isTraining &&
+        day.exercises.length
+      ) {
+
+        html += `
+          <div class="inner-title">
+            🏋️ VJEŽBE
+          </div>
+
+          <div class="exercise-list">
         `;
 
-        if (
-          isTraining &&
-          day.exercises.length
+        for (
+          const exercise
+          of day.exercises
         ) {
 
           html += `
-            <div class="inner-title">
-              🏋️ VJEŽBE
-            </div>
+            <div class="exercise">
 
-            <div class="exercise-list">
-          `;
-
-          for (
-            const exercise
-            of day.exercises
-          ) {
-
-            html += `
-              <div class="exercise">
-
-                <div class="exercise-name">
-                  ${escapeHtml(
-                    exercise.name
-                  )}
-                </div>
-
-                <div class="exercise-value">
-                  ${escapeHtml(
-                    exercise.value
-                  )}
-                </div>
-
+              <div class="exercise-name">
+                ${escapeHtml(
+                  exercise.name
+                )}
               </div>
-            `;
-          }
 
-          html += `
-            </div>
-          `;
-        }
-
-        if (day.meals.length) {
-
-          html += `
-            <div class="inner-title">
-              🍽️ ISHRANA
-            </div>
-
-            <div class="meal-grid">
-          `;
-
-          for (
-            const meal
-            of day.meals
-          ) {
-
-            html += `
-              <div class="meal">
-
-                <div class="meal-name">
-                  ${escapeHtml(
-                    meal.name
-                  )}
-                </div>
-
-                <div class="meal-text">
-                  ${escapeHtml(
-                    meal.text
-                  )}
-                </div>
-
+              <div class="exercise-value">
+                ${escapeHtml(
+                  exercise.value
+                )}
               </div>
-            `;
-          }
 
-          html += `
             </div>
           `;
         }
 
         html += `
-            <div class="daily-values">
+          </div>
+        `;
+      }
 
-              <div class="daily-value">
+      if (day.meals.length) {
 
-                <div class="daily-value-label">
-                  Kalorije
-                </div>
+        html += `
+          <div class="inner-title">
+            🍽️ ISHRANA
+          </div>
 
-                <div class="daily-value-number">
-                  ${escapeHtml(
-                    day.calories || "—"
-                  )}
-                </div>
+          <div class="meal-grid">
+        `;
 
+        for (
+          const meal
+          of day.meals
+        ) {
+
+          html += `
+            <div class="meal">
+
+              <div class="meal-name">
+                ${escapeHtml(
+                  meal.name
+                )}
               </div>
 
-              <div class="daily-value">
-
-                <div class="daily-value-label">
-                  Protein
-                </div>
-
-                <div class="daily-value-number">
-                  ${escapeHtml(
-                    day.protein || "—"
-                  )}
-                </div>
-
-              </div>
-
-              <div class="daily-value">
-
-                <div class="daily-value-label">
-                  Voda
-                </div>
-
-                <div class="daily-value-number">
-                  ${escapeHtml(
-                    day.water || "—"
-                  )}
-                </div>
-
+              <div class="meal-text">
+                ${escapeHtml(
+                  meal.text
+                )}
               </div>
 
             </div>
+          `;
+        }
 
+        html += `
           </div>
-
-        </article>
         `;
       }
 
       html += `
-        <div class="summary-card">
+          <div class="daily-values">
 
-          <div class="summary-title">
-            🎯 DNEVNI CILJEVI
-          </div>
-
-          <div class="summary-grid">
-
-            <div class="summary-item">
-              <div class="summary-label">
-                Cilj
-              </div>
-
-              <div
-                class="summary-value"
-                id="summaryGoal"
-              >
-                —
-              </div>
-            </div>
-
-            <div class="summary-item">
-              <div class="summary-label">
+            <div class="daily-value">
+              <div class="daily-value-label">
                 Kalorije
               </div>
 
-              <div
-                class="summary-value"
-              >
-                ${
-                  caloriesElement.textContent
-                }
+              <div class="daily-value-number">
+                ${escapeHtml(
+                  day.calories || "—"
+                )}
               </div>
             </div>
 
-            <div class="summary-item">
-              <div class="summary-label">
+            <div class="daily-value">
+              <div class="daily-value-label">
                 Protein
               </div>
 
-              <div
-                class="summary-value"
-              >
-                ${
-                  proteinElement.textContent
-                }
+              <div class="daily-value-number">
+                ${escapeHtml(
+                  day.protein || "—"
+                )}
               </div>
             </div>
 
-            <div class="summary-item">
-              <div class="summary-label">
+            <div class="daily-value">
+              <div class="daily-value-label">
                 Voda
               </div>
 
-              <div
-                class="summary-value"
-              >
-                ${
-                  waterElement.textContent
-                }
+              <div class="daily-value-number">
+                ${escapeHtml(
+                  day.water || "—"
+                )}
               </div>
             </div>
 
           </div>
 
         </div>
+
+      </article>
       `;
-
-      planElement.innerHTML =
-        html;
-
-      const goal =
-        document.getElementById("goal");
-
-      const summaryGoal =
-        document.getElementById(
-          "summaryGoal"
-        );
-
-      if (
-        goal &&
-        summaryGoal
-      ) {
-
-        summaryGoal.textContent =
-          goal.value;
-      }
-
-      planElement.style.display =
-        "block";
     }
 
-    function escapeHtml(value) {
+    planElement.innerHTML =
+      html;
 
-      return String(value)
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-    }
-  </script>
+    planElement.style.display =
+      "block";
+  }
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+</script>
 
 </body>
 </html>
