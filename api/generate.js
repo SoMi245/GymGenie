@@ -236,7 +236,7 @@ VRATI SAMO JSON.
 
     const timeout = setTimeout(() => {
       controller.abort();
-    }, 8000);
+    }, 55000);
 
     let response;
 
