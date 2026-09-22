@@ -1,524 +1,705 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="bs">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GymGenie - AI Fitness Planner</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  <title>GymGenie — AI Personalni Trener</title>
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #080d14;
-  color: white;
-  min-height: 100vh;
-}
+  <meta
+    name="description"
+    content="GymGenie je AI personalni trener za trening i ishranu."
+  />
 
-.container {
-  width: 100%;
-  max-width: 1050px;
-  margin: auto;
-  padding: 40px 20px 70px;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.hero {
-  text-align: center;
-  margin-bottom: 35px;
-}
+    :root {
+      --bg: #080a0f;
+      --card: #11141b;
+      --card2: #171b24;
+      --border: #272d38;
+      --text: #f4f6f8;
+      --muted: #9299a6;
+      --accent: #8b5cf6;
+      --accent2: #6d3eea;
+      --success: #35d07f;
+      --danger: #ff5f6d;
+    }
 
-.logo {
-  font-size: 48px;
-  font-weight: 900;
-  margin-bottom: 10px;
-}
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(139, 92, 246, 0.13),
+          transparent 35%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      padding: 24px 16px 60px;
+    }
 
-.logo span {
-  color: #00e676;
-}
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+    }
 
-.subtitle {
-  color: #9ba7b8;
-  font-size: 18px;
-  line-height: 1.5;
-}
+    .hero {
+      text-align: center;
+      padding: 28px 0 34px;
+    }
 
-.card {
-  background: #111827;
-  border: 1px solid #263244;
-  border-radius: 20px;
-  padding: 28px;
-  margin-bottom: 25px;
-}
+    .logo {
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
 
-.card h2 {
-  margin-bottom: 22px;
-  font-size: 25px;
-}
+    .logo span {
+      color: var(--accent);
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
+    .subtitle {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 16px;
+    }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+    .card {
+      background: rgba(17, 20, 27, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+    }
 
-.field label {
-  color: #cbd5e1;
-  font-size: 14px;
-  font-weight: 700;
-}
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
 
-.field input,
-.field select {
-  width: 100%;
-  background: #0b111b;
-  color: white;
-  border: 1px solid #344155;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 16px;
-  outline: none;
-}
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
 
-.field input:focus,
-.field select:focus {
-  border-color: #00e676;
-}
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-.generate-button {
-  width: 100%;
-  margin-top: 25px;
-  border: none;
-  border-radius: 14px;
-  padding: 17px;
-  background: #00e676;
-  color: #06110a;
-  font-size: 17px;
-  font-weight: 900;
-  cursor: pointer;
-}
+    .field.full {
+      grid-column: 1 / -1;
+    }
 
-.generate-button:hover {
-  background: #00f184;
-}
+    label {
+      color: #c7ccd5;
+      font-size: 14px;
+      font-weight: 700;
+    }
 
-.generate-button:disabled {
-  opacity: 0.7;
-  cursor: wait;
-}
+    input,
+    select {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 14px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: #0c0f15;
+      color: var(--text);
+      outline: none;
+      font-size: 16px;
+    }
 
-#result {
-  display: none;
-}
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+    }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
+    .generate-button {
+      width: 100%;
+      min-height: 58px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 15px;
+      background: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent2)
+      );
+      color: white;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
 
-.stat {
-  background: #0b111b;
-  border: 1px solid #263244;
-  border-radius: 15px;
-  padding: 20px;
-  text-align: center;
-}
+    .generate-button:hover {
+      transform: translateY(-1px);
+    }
 
-.stat-title {
-  color: #8e9aad;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
+    .generate-button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+      transform: none;
+    }
 
-.stat-value {
-  font-size: 22px;
-  font-weight: 900;
-  color: #00e676;
-}
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
 
-.plan-box {
-  background: #0b111b;
-  border: 1px solid #263244;
-  border-radius: 16px;
-  padding: 25px;
-}
+    .stat {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 14px;
+      text-align: center;
+    }
 
-.tag {
-  display: inline-block;
-  background: #123b29;
-  color: #00e676;
-  border: 1px solid #216c49;
-  border-radius: 999px;
-  padding: 6px 11px;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 14px;
-}
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
 
-.plan-box h3 {
-  font-size: 24px;
-  margin-bottom: 18px;
-}
+    .stat-value {
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 900;
+    }
 
-#weeklyPlan {
-  color: #d8dee8;
-  line-height: 1.65;
-  font-size: 15px;
-}
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
 
-.plan-text {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
+    .ai-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 16px rgba(53, 208, 127, 0.6);
+    }
 
-.loading {
-  text-align: center;
-  padding: 30px 10px;
-  color: #9ba7b8;
-}
+    .ai-title {
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
 
-.loading strong {
-  display: block;
-  color: #00e676;
-  font-size: 18px;
-  margin-bottom: 8px;
-}
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 34px 15px;
+      color: var(--muted);
+    }
 
-.footer {
-  text-align: center;
-  color: #697586;
-  font-size: 13px;
-  margin-top: 30px;
-}
+    .spinner {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 14px;
+      border: 3px solid #292f3b;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
 
-@media (max-width: 700px) {
-  .container {
-    padding: 25px 14px 50px;
-  }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-  .logo {
-    font-size: 38px;
-  }
+    .plan {
+      display: none;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.75;
+      color: #e7eaf0;
+      font-size: 14px;
+      background: #0c0f15;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 20px;
+    }
 
-  .subtitle {
-    font-size: 15px;
-  }
+    .error {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 13px;
+      background: rgba(255, 95, 109, 0.08);
+      border: 1px solid rgba(255, 95, 109, 0.3);
+      color: #ff9da6;
+      font-size: 14px;
+    }
 
-  .card {
-    padding: 20px;
-  }
+    .footer {
+      text-align: center;
+      color: #626a77;
+      font-size: 12px;
+      margin-top: 26px;
+    }
 
-  .grid {
-    grid-template-columns: 1fr;
-  }
+    @media (max-width: 700px) {
+      body {
+        padding: 12px 10px 40px;
+      }
 
-  .stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-</style>
+      .card {
+        padding: 18px;
+        border-radius: 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .plan {
+        padding: 15px;
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <main class="container">
 
-  <div class="hero">
-    <div class="logo">Gym<span>Genie</span></div>
-    <p class="subtitle">
-      Tvoj AI personalni trener za trening i ishranu.<br>
-      Unesi podatke i napravi personalizovan plan za svih 7 dana.
-    </p>
-  </div>
-
-  <div class="card">
-
-    <h2>👤 Tvoji podaci</h2>
-
-    <div class="grid">
-
-      <div class="field">
-        <label for="height">Visina (cm)</label>
-        <input id="height" type="number" placeholder="npr. 180" min="100" max="250">
+    <section class="hero">
+      <div class="logo">
+        Gym<span>Genie</span>
       </div>
 
-      <div class="field">
-        <label for="weight">Težina (kg)</label>
-        <input id="weight" type="number" placeholder="npr. 80" min="30" max="300">
-      </div>
+      <p class="subtitle">
+        Tvoj AI personalni trener za trening i ishranu.
+        <br />
+        Unesi podatke i napravi personalizovan plan za svih 7 dana.
+      </p>
+    </section>
 
-      <div class="field">
-        <label for="age">Godine</label>
-        <input id="age" type="number" placeholder="npr. 25" min="13" max="100">
-      </div>
+    <section class="card">
 
-      <div class="field">
-        <label for="experience">Iskustvo</label>
-        <select id="experience">
-          <option value="Početnik">Početnik</option>
-          <option value="Srednji nivo">Srednji nivo</option>
-          <option value="Napredni nivo">Napredni nivo</option>
-        </select>
-      </div>
+      <h2 class="section-title">
+        👤 Tvoji podaci
+      </h2>
 
-      <div class="field">
-        <label for="goal">Cilj</label>
-        <select id="goal">
-          <option value="Mršavljenje">Mršavljenje</option>
-          <option value="Održavanje težine">Održavanje težine</option>
-          <option value="Dobijanje mišićne mase">Dobijanje mišićne mase</option>
-          <option value="Povećanje snage">Povećanje snage</option>
-          <option value="Bolja kondicija">Bolja kondicija</option>
-        </select>
-      </div>
+      <form id="gymForm">
 
-      <div class="field">
-        <label for="days">Treninga sedmično</label>
-        <select id="days">
-          <option value="1">1 dan</option>
-          <option value="2">2 dana</option>
-          <option value="3" selected>3 dana</option>
-          <option value="4">4 dana</option>
-          <option value="5">5 dana</option>
-          <option value="6">6 dana</option>
-          <option value="7">7 dana</option>
-        </select>
-      </div>
+        <div class="form-grid">
 
-      <div class="field">
-        <label for="location">Mjesto treninga</label>
-        <select id="location">
-          <option value="Teretana">Teretana</option>
-          <option value="Kuća - bez opreme">Kuća - bez opreme</option>
-          <option value="Kuća - osnovna oprema">Kuća - osnovna oprema</option>
-        </select>
-      </div>
+          <div class="field">
+            <label for="height">
+              Visina (cm)
+            </label>
 
-      <div class="field">
-        <label for="meals">Obroka dnevno</label>
-        <select id="meals">
-          <option value="2">2 obroka</option>
-          <option value="3" selected>3 obroka</option>
-          <option value="4">4 obroka</option>
-          <option value="5">5 obroka</option>
-          <option value="6">6 obroka</option>
-        </select>
-      </div>
+            <input
+              id="height"
+              type="number"
+              min="100"
+              max="230"
+              placeholder="npr. 180"
+              required
+            />
+          </div>
 
-    </div>
+          <div class="field">
+            <label for="weight">
+              Težina (kg)
+            </label>
 
-    <button
-      id="generateButton"
-      class="generate-button"
-      onclick="generatePlan()"
+            <input
+              id="weight"
+              type="number"
+              min="30"
+              max="250"
+              step="0.1"
+              placeholder="npr. 80"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="age">
+              Godine
+            </label>
+
+            <input
+              id="age"
+              type="number"
+              min="13"
+              max="100"
+              placeholder="npr. 20"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="experience">
+              Iskustvo
+            </label>
+
+            <select id="experience" required>
+              <option value="Početnik">
+                Početnik
+              </option>
+
+              <option value="Srednji nivo">
+                Srednji nivo
+              </option>
+
+              <option value="Napredni nivo">
+                Napredni nivo
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="goal">
+              Cilj
+            </label>
+
+            <select id="goal" required>
+              <option value="Mršavljenje">
+                Mršavljenje
+              </option>
+
+              <option value="Održavanje težine">
+                Održavanje težine
+              </option>
+
+              <option value="Dobijanje mišićne mase">
+                Dobijanje mišićne mase
+              </option>
+
+              <option value="Povećanje snage">
+                Povećanje snage
+              </option>
+
+              <option value="Bolja kondicija">
+                Bolja kondicija
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="trainingDays">
+              Treninga sedmično
+            </label>
+
+            <select id="trainingDays" required>
+              <option value="1">1 dan</option>
+              <option value="2">2 dana</option>
+              <option value="3" selected>3 dana</option>
+              <option value="4">4 dana</option>
+              <option value="5">5 dana</option>
+              <option value="6">6 dana</option>
+              <option value="7">7 dana</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="location">
+              Mjesto treninga
+            </label>
+
+            <select id="location" required>
+              <option value="Teretana">
+                Teretana
+              </option>
+
+              <option value="Kuća - bez opreme">
+                Kuća - bez opreme
+              </option>
+
+              <option value="Kuća - osnovna oprema">
+                Kuća - osnovna oprema
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="meals">
+              Obroka dnevno
+            </label>
+
+            <select id="meals" required>
+              <option value="2">2 obroka</option>
+              <option value="3" selected>3 obroka</option>
+              <option value="4">4 obroka</option>
+              <option value="5">5 obroka</option>
+              <option value="6">6 obroka</option>
+            </select>
+          </div>
+
+        </div>
+
+        <button
+          type="submit"
+          id="generateButton"
+          class="generate-button"
+        >
+          GENERIRAJ MOJ PLAN
+        </button>
+
+      </form>
+
+      <div
+        id="error"
+        class="error"
+        role="alert"
+      ></div>
+
+    </section>
+
+    <section
+      id="statsCard"
+      class="card"
+      style="display: none;"
     >
-      GENERIRAJ MOJ PLAN
-    </button>
 
-  </div>
-
-  <div id="result">
-
-    <div class="card">
-
-      <h2>📊 Tvoje osnovne vrijednosti</h2>
+      <h2 class="section-title">
+        📊 Tvoje osnovne vrijednosti
+      </h2>
 
       <div class="stats">
 
         <div class="stat">
-          <div class="stat-title">BMI</div>
-          <div class="stat-value" id="bmi">-</div>
+          <div class="stat-label">
+            BMI
+          </div>
+
+          <div
+            class="stat-value"
+            id="bmi"
+          >
+            —
+          </div>
         </div>
 
         <div class="stat">
-          <div class="stat-title">Kalorije</div>
-          <div class="stat-value" id="calories">-</div>
+          <div class="stat-label">
+            Kalorije
+          </div>
+
+          <div
+            class="stat-value"
+            id="calories"
+          >
+            —
+          </div>
         </div>
 
         <div class="stat">
-          <div class="stat-title">Protein</div>
-          <div class="stat-value" id="protein">-</div>
+          <div class="stat-label">
+            Protein
+          </div>
+
+          <div
+            class="stat-value"
+            id="protein"
+          >
+            —
+          </div>
         </div>
 
         <div class="stat">
-          <div class="stat-title">Voda</div>
-          <div class="stat-value" id="water">-</div>
+          <div class="stat-label">
+            Voda
+          </div>
+
+          <div
+            class="stat-value"
+            id="water"
+          >
+            —
+          </div>
         </div>
 
       </div>
 
-    </div>
+    </section>
 
-    <div class="card">
+    <section
+      id="resultCard"
+      class="card"
+      style="display: none;"
+    >
 
-      <div class="plan-box">
+      <div class="ai-header">
+        <div class="ai-dot"></div>
 
-        <span class="tag">GYMGENIE AI</span>
-
-        <h3>🤖 Tvoj personalizovani plan</h3>
-
-        <div id="weeklyPlan"></div>
-
+        <div class="ai-title">
+          GYMGENIE AI
+        </div>
       </div>
 
+      <div
+        id="loading"
+        class="loading"
+      >
+        <div class="spinner"></div>
+
+        <strong>
+          🤖 AI pravi tvoj personalizovani plan...
+        </strong>
+
+        <p style="margin-top: 8px;">
+          Analiziram tvoje podatke i pripremam svih 7 dana.
+        </p>
+      </div>
+
+      <div
+        id="plan"
+        class="plan"
+      ></div>
+
+    </section>
+
+    <div class="footer">
+      GymGenie AI • Personalizovani fitness planner
     </div>
 
-  </div>
+  </main>
 
-  <div class="footer">
-    GymGenie AI • Personalizovani fitness i nutrition planner
-  </div>
+  <script>
+    const form = document.getElementById("gymForm");
+    const button = document.getElementById("generateButton");
 
-</div>
+    const resultCard = document.getElementById("resultCard");
+    const loading = document.getElementById("loading");
+    const planElement = document.getElementById("plan");
 
-<script>
-async function generatePlan() {
+    const statsCard = document.getElementById("statsCard");
 
-  const height = Number(document.getElementById("height").value);
-  const weight = Number(document.getElementById("weight").value);
-  const age = Number(document.getElementById("age").value);
+    const bmiElement = document.getElementById("bmi");
+    const caloriesElement = document.getElementById("calories");
+    const proteinElement = document.getElementById("protein");
+    const waterElement = document.getElementById("water");
 
-  const experience =
-    document.getElementById("experience").value;
+    const errorElement = document.getElementById("error");
 
-  const goal =
-    document.getElementById("goal").value;
+    form.addEventListener("submit", generatePlan);
 
-  const trainingDays =
-    Number(document.getElementById("days").value);
+    async function generatePlan(event) {
+      event.preventDefault();
 
-  const location =
-    document.getElementById("location").value;
+      errorElement.style.display = "none";
+      planElement.style.display = "none";
+      statsCard.style.display = "none";
 
-  const meals =
-    Number(document.getElementById("meals").value);
+      resultCard.style.display = "block";
+      loading.style.display = "block";
 
-  if (!height || !weight || !age) {
-    alert("Unesi visinu, težinu i godine.");
-    return;
-  }
+      button.disabled = true;
+      button.textContent = "AI PRAVI TVOJ PLAN...";
 
-  const button =
-    document.getElementById("generateButton");
+      const payload = {
+        height: document.getElementById("height").value,
+        weight: document.getElementById("weight").value,
+        age: document.getElementById("age").value,
+        experience: document.getElementById("experience").value,
+        goal: document.getElementById("goal").value,
+        trainingDays: document.getElementById("trainingDays").value,
+        location: document.getElementById("location").value,
+        meals: document.getElementById("meals").value
+      };
 
-  const weeklyPlan =
-    document.getElementById("weeklyPlan");
+      try {
+        const response = await fetch("/api/generate", {
+          method: "POST",
 
-  const result =
-    document.getElementById("result");
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-  button.disabled = true;
-  button.textContent = "AI PRAVI TVOJ PLAN...";
+          body: JSON.stringify(payload)
+        });
 
-  result.style.display = "block";
+        const data = await response.json();
 
-  weeklyPlan.innerHTML = `
-    <div class="loading">
-      <strong>🤖 AI pravi tvoj personalizovani plan...</strong>
-      Analiziram tvoje podatke i pripremam svih 7 dana.
-    </div>
-  `;
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Greška pri generisanju plana."
+          );
+        }
 
-  try {
+        if (!data.plan) {
+          throw new Error(
+            "AI nije vratio plan."
+          );
+        }
 
-    const response = await fetch("/api/generate", {
-      method: "POST",
+        if (data.stats) {
+          bmiElement.textContent =
+            Number(data.stats.bmi).toFixed(1);
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+          caloriesElement.textContent =
+            `${data.stats.calories} kcal`;
 
-      body: JSON.stringify({
-        height,
-        weight,
-        age,
-        experience,
-        goal,
-        trainingDays,
-        location,
-        meals
-      })
-    });
+          proteinElement.textContent =
+            `${data.stats.protein} g`;
 
-    const data = await response.json();
+          waterElement.textContent =
+            `${data.stats.water} L`;
 
-    if (!response.ok) {
-      throw new Error(
-        data.error || "Greška pri generisanju plana."
-      );
+          statsCard.style.display = "block";
+        }
+
+        planElement.textContent = data.plan;
+        planElement.style.display = "block";
+
+        resultCard.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      } catch (error) {
+        errorElement.textContent =
+          error.message || "Došlo je do greške.";
+
+        errorElement.style.display = "block";
+      } finally {
+        loading.style.display = "none";
+
+        button.disabled = false;
+        button.textContent = "GENERIRAJ MOJ PLAN";
+      }
     }
-
-    const plan = data.plan;
-
-    weeklyPlan.innerHTML = `
-      <div class="plan-text">${escapeHtml(plan)}</div>
-    `;
-
-    const bmi =
-      weight / Math.pow(height / 100, 2);
-
-    const calories =
-      weight * 30;
-
-    const protein =
-      Math.round(weight * 1.8);
-
-    const water =
-      (weight * 0.035).toFixed(1);
-
-    document.getElementById("bmi").textContent =
-      bmi.toFixed(1);
-
-    document.getElementById("calories").textContent =
-      Math.round(calories) + " kcal";
-
-    document.getElementById("protein").textContent =
-      protein + " g";
-
-    document.getElementById("water").textContent =
-      water + " L";
-
-    result.style.display = "block";
-
-    window.scrollTo({
-      top: result.offsetTop,
-      behavior: "smooth"
-    });
-
-  } catch (error) {
-
-    result.style.display = "none";
-
-    alert("Greška: " + error.message);
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "GENERIRAJ MOJ PLAN";
-
-  }
-}
-
-function escapeHtml(text) {
-
-  const div = document.createElement("div");
-
-  div.textContent = text;
-
-  return div.innerHTML;
-}
-</script>
+  </script>
 
 </body>
 </html>
