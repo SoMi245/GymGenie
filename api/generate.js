@@ -1,8 +1,6 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Koristi POST zahtjev."
-    });
+    return res.status(405).json({ error: "Koristi POST zahtjev." });
   }
 
   try {
@@ -17,45 +15,37 @@ export default async function handler(req, res) {
       meals
     } = req.body || {};
 
-    if (!height || !weight || !age) {
-      return res.status(400).json({
-        error: "Nedostaju podaci."
-      });
-    }
-
     const prompt = `
 Ti si GymGenie AI trener.
 
-Podaci korisnika:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
 Treninga sedmično: ${trainingDays}
-Mjesto: ${location}
+Mjesto treninga: ${location}
 Obroka dnevno: ${meals}
 
 Napravi KRATAK plan za svih 7 dana.
 
-Za svaki dan napiši:
+Za svaki dan:
 - TRENING ili ODMOR
-- ako je trening: 3-5 vježbi, serije x ponavljanja
-- obroke prema broju obroka
-- okvirne kalorije
+- 3-5 vježbi ako je trening
+- serije x ponavljanja
+- obroci
+- kalorije
 - protein
-- vodu
+- voda
 
-Bez objašnjenja vježbi i bez dugog uvoda.
-Piši jasno i kratko na srpskom/bosanskom jeziku.
+Bez dugog uvoda i bez objašnjenja vježbi.
+Piši kratko na srpskom/bosanskom jeziku.
 
-Na kraju napiši:
+Na kraju:
 CILJ:
 KALORIJE:
 PROTEIN:
 VODA:
-
-Kalorije, protein i voda su okvirne preporuke.
 `;
 
     const response = await fetch(
@@ -70,10 +60,6 @@ Kalorije, protein i voda su okvirne preporuke.
           model: "@cf/zai-org/glm-4.7-flash",
           messages: [
             {
-              role: "system",
-              content: "You are GymGenie. Give concise fitness plans."
-            },
-            {
               role: "user",
               content: prompt
             }
@@ -86,24 +72,26 @@ Kalorije, protein i voda su okvirne preporuke.
 
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error("Cloudflare:", data);
+    console.log("CLOUDFLARE RESPONSE:", JSON.stringify(data));
 
+    if (!response.ok) {
       return res.status(502).json({
-        error:
-          data?.error?.message ||
-          data?.errors?.[0]?.message ||
-          "Cloudflare AI greška."
+        error: "Cloudflare greška.",
+        debug: data
       });
     }
 
     const plan =
       data?.choices?.[0]?.message?.content ||
-      data?.result?.response;
+      data?.result?.response ||
+      data?.result?.content ||
+      data?.response ||
+      "";
 
     if (!plan) {
       return res.status(502).json({
-        error: "AI nije vratio plan."
+        error: "AI nije vratio tekst.",
+        debug: data
       });
     }
 
@@ -112,10 +100,11 @@ Kalorije, protein i voda su okvirne preporuke.
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("SERVER ERROR:", error);
 
     return res.status(500).json({
-      error: "Greška servera."
+      error: "Greška servera.",
+      debug: error.message
     });
   }
 }
