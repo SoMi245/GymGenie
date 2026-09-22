@@ -18,6 +18,7 @@ export default async function handler(req, res) {
     const prompt = `
 Ti si GymGenie AI trener.
 
+Korisnik:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
@@ -38,7 +39,8 @@ Za svaki dan:
 - protein
 - voda
 
-Bez dugog uvoda i bez objašnjenja vježbi.
+Bez dugog uvoda.
+Bez objašnjenja vježbi.
 Piši kratko na srpskom/bosanskom jeziku.
 
 Na kraju:
@@ -72,26 +74,32 @@ VODA:
 
     const data = await response.json();
 
-    console.log("CLOUDFLARE RESPONSE:", JSON.stringify(data));
-
     if (!response.ok) {
       return res.status(502).json({
-        error: "Cloudflare greška.",
-        debug: data
+        error: "Cloudflare AI greška."
       });
     }
 
-    const plan =
-      data?.choices?.[0]?.message?.content ||
-      data?.result?.response ||
-      data?.result?.content ||
-      data?.response ||
-      "";
+    // Pokušaj pronaći tekst iz različitih mogućih formata
+    let plan = "";
+
+    if (data?.choices?.[0]?.message?.content) {
+      plan = data.choices[0].message.content;
+    } else if (data?.choices?.[0]?.text) {
+      plan = data.choices[0].text;
+    } else if (data?.result?.response) {
+      plan = data.result.response;
+    } else if (data?.result?.content) {
+      plan = data.result.content;
+    } else if (typeof data?.response === "string") {
+      plan = data.response;
+    }
 
     if (!plan) {
+      console.log("Cloudflare keys:", Object.keys(data || {}));
+
       return res.status(502).json({
-        error: "AI nije vratio tekst.",
-        debug: data
+        error: "AI nije vratio tekst."
       });
     }
 
@@ -103,8 +111,7 @@ VODA:
     console.error("SERVER ERROR:", error);
 
     return res.status(500).json({
-      error: "Greška servera.",
-      debug: error.message
+      error: "Greška servera."
     });
   }
 }
