@@ -17,55 +17,101 @@ export default async function handler(req, res) {
       meals
     } = req.body || {};
 
+    const h = Number(height);
+    const w = Number(weight);
+    const a = Number(age);
+    const d = Number(trainingDays);
+    const m = Number(meals);
+
+    if (!h || !w || !a || !d || !m) {
+      return res.status(400).json({
+        error: "Nedostaju podaci korisnika."
+      });
+    }
+
+    // Osnovne okvirne vrijednosti.
+    // AI ih NE mijenja.
+    const bmi = w / Math.pow(h / 100, 2);
+
+    let calories = Math.round(w * 30);
+
+    if (goal === "Dobijanje mišićne mase") {
+      calories += 250;
+    }
+
+    if (goal === "Mršavljenje") {
+      calories = Math.max(1800, calories - 250);
+    }
+
+    const protein = Math.round(w * 1.8);
+    const water = Math.round(w * 0.035 * 10) / 10;
+
     const prompt = `
-Ti si GymGenie AI trener.
+Ti si GymGenie, profesionalni AI fitness trener.
 
 PODACI KORISNIKA:
-Visina: ${height} cm
-Težina: ${weight} kg
-Godine: ${age}
+Visina: ${h} cm
+Težina: ${w} kg
+Godine: ${a}
 Iskustvo: ${experience}
 Cilj: ${goal}
-Treninga sedmično: ${trainingDays}
+Treninga sedmično: ${d}
 Mjesto treninga: ${location}
-Obroka dnevno: ${meals}
+Obroka dnevno: ${m}
+
+VEĆ IZRAČUNATE VRIJEDNOSTI:
+Kalorije: ${calories} kcal
+Protein: ${protein} g
+Voda: ${water} L
+
+NIKADA NE MIJENJAJ OVE TRI VRIJEDNOSTI.
 
 NAPRAVI PERSONALIZOVAN PLAN ZA TAČNO 7 DANA.
 
-VAŽNA PRAVILA ZA TRENING:
-
-- Tačno ${trainingDays} dana moraju biti TRENING.
-- Ostali dani su ODMOR ili AKTIVNI ODMOR.
-- Rasporedi treninge kroz sedmicu tako da postoji dovoljan odmor.
-- Prilagodi vježbe cilju i nivou korisnika.
-- Nikada nemoj izmišljati nazive vježbi.
-- Koristi samo stvarne i poznate nazive vježbi.
-- Ne prevodi nazive vježbi bukvalno ako bi prevod bio nejasan. Koristi uobičajeni naziv, npr. sklekovi, čučanj, iskorak, plank, zgibovi, veslanje, bench press.
+TRENING:
+- Tačno ${d} dana treninga.
+- Ostali dani ODMOR ili AKTIVNI ODMOR.
+- Trening rasporedi logično kroz sedmicu.
+- Prilagodi trening cilju: ${goal}.
+- Prilagodi trening nivou: ${experience}.
+- Prilagodi trening mjestu: ${location}.
+- Ako je "Kuća - bez opreme", NE koristi zgibove, sprave, šipke, bučice ili bilo kakvu opremu.
+- Ako je "Kuća - osnovna oprema", koristi samo osnovnu opremu.
+- Ako je "Teretana", možeš koristiti sprave, šipku, bučice i sajle.
+- Koristi samo stvarne i poznate vježbe.
+- Nikada ne izmišljaj nazive vježbi.
+- Svaki trening neka ima 4 do 5 vježbi.
 - Ne ponavljaj isti kompletan trening.
-- Ako je TERETANA, koristi sprave, šipku, bučice i sajle.
-- Ako je KUĆA - BEZ OPREME, koristi samo vježbe sa sopstvenom težinom.
-- Ako je KUĆA - OSNOVNA OPREMA, koristi samo osnovnu opremu.
-- Na svakom treningu navedi 4-5 vježbi.
-- Za svaku vježbu navedi serije i ponavljanja.
 
 ISHRANA:
+- Svaki dan mora imati tačno ${m} obroka.
+- Nemoj kopirati isti jelovnik više dana.
+- Mijenjaj izvore proteina, ugljikohidrata, povrće i voće.
+- Obroci moraju biti realni i jednostavni.
+- Koristi iste ukupne vrijednosti svaki dan:
+  ${calories} kcal
+  ${protein} g proteina
+  ${water} L vode
 
-- Navedi tačno ${meals} obroka svakog dana.
-- Obroci neka budu različiti i realni.
-- Koristi normalne namirnice.
-- Prilagodi okvirnu ishranu cilju korisnika.
-- Kalorije, protein i voda su OKVIRNE vrijednosti, nisu medicinski savjet.
-- Ne preporučuj ekstremne dijete ili ekstremno smanjenje hrane.
+VAŽNO:
+- Kalorije, protein i voda moraju biti IDENTIČNI svaki dan.
+- Na kraju moraju biti IDENTIČNI ukupnim vrijednostima.
+- Ne dodaj izmišljene vježbe.
+- Ne dodaj uvod.
+- Ne dodaj objašnjenja.
+- Ne dodaj napomene.
+- Ne ponavljaj instrukcije.
+- Ne piši ništa nakon završetka plana.
 
-FORMAT ODGOVORA:
+FORMAT:
 
-PONEDJELJAK — TRENING ili ODMOR
+PONEDJELJAK — TRENING
 
 Vježbe:
-- Naziv vježbe — 3 x 10
-- Naziv vježbe — 3 x 12
-- Naziv vježbe — 3 x 10
-- Naziv vježbe — 3 x 15
+- Vježba — 3 x 10
+- Vježba — 3 x 12
+- Vježba — 3 x 10
+- Vježba — 3 x 15
 
 Obroci:
 - Doručak: ...
@@ -73,46 +119,16 @@ Obroci:
 - Ručak: ...
 - Večera: ...
 
-Kalorije: ... kcal
-Protein: ... g
-Voda: ... L
+Kalorije: ${calories} kcal
+Protein: ${protein} g
+Voda: ${water} L
 
-UTORKA — TRENING ili ODMOR
-
-[isti format]
-
-SRIJEDA — TRENING ili ODMOR
-
-[isti format]
-
-ČETVRTAK — TRENING ili ODMOR
-
-[isti format]
-
-PETAK — TRENING ili ODMOR
-
-[isti format]
-
-SUBOTA — TRENING ili ODMOR
-
-[isti format]
-
-NEDELJA — TRENING ili ODMOR
-
-[isti format]
+[ISTI FORMAT ZA SVIH 7 DANA]
 
 CILJ: ${goal}
-KALORIJE: ... kcal
-PROTEIN: ... g
-VODA: ... L
-
-STROGO:
-- Samo plan.
-- Bez uvoda.
-- Bez objašnjenja.
-- Bez ponavljanja instrukcija.
-- Bez izmišljanja vježbi.
-- Bez teksta nakon VODA.
+KALORIJE: ${calories} kcal
+PROTEIN: ${protein} g
+VODA: ${water} L
 `;
 
     const response = await fetch(
@@ -130,7 +146,7 @@ STROGO:
             {
               role: "system",
               content:
-                "You are GymGenie. Create accurate, concise and personalized fitness plans. Use only real exercise names. Never invent exercise names."
+                "You are GymGenie. Generate concise, realistic and personalized fitness plans. Never invent exercises. Follow all numerical values exactly."
             },
             {
               role: "user",
@@ -179,15 +195,19 @@ STROGO:
     }
 
     if (!plan) {
-      console.error("Cloudflare response:", JSON.stringify(data));
-
       return res.status(502).json({
         error: "AI nije vratio plan."
       });
     }
 
     return res.status(200).json({
-      plan
+      plan,
+      stats: {
+        bmi: Number(bmi.toFixed(1)),
+        calories,
+        protein,
+        water
+      }
     });
 
   } catch (error) {
