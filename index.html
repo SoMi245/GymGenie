@@ -19,28 +19,37 @@
     }
 
     :root {
-      --bg: #080a0f;
-      --card: #11141b;
-      --card2: #171b24;
-      --border: #272d38;
-      --text: #f4f6f8;
-      --muted: #9299a6;
+      --bg: #07090d;
+      --surface: #10131a;
+      --surface-2: #151922;
+      --surface-3: #1a1f2a;
+      --border: #252b36;
+
+      --text: #f5f7fa;
+      --muted: #8f98a7;
+
       --accent: #8b5cf6;
-      --accent2: #6d3eea;
-      --success: #35d07f;
-      --danger: #ff5f6d;
+      --accent-2: #6d3eea;
+
+      --green: #35d07f;
+      --orange: #f5a524;
+      --red: #ff6472;
+
+      --radius: 20px;
     }
 
     body {
       min-height: 100vh;
       background:
         radial-gradient(
-          circle at top,
-          rgba(139, 92, 246, 0.13),
+          circle at 50% -10%,
+          rgba(139, 92, 246, 0.18),
           transparent 35%
         ),
         var(--bg);
+
       color: var(--text);
+
       font-family:
         Inter,
         system-ui,
@@ -48,24 +57,29 @@
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
-      padding: 24px 16px 60px;
+
+      padding: 24px 16px 70px;
     }
 
     .container {
       width: 100%;
-      max-width: 980px;
+      max-width: 1050px;
       margin: 0 auto;
     }
 
+    /* =========================
+       HERO
+    ========================= */
+
     .hero {
       text-align: center;
-      padding: 28px 0 34px;
+      padding: 35px 0 38px;
     }
 
     .logo {
-      font-size: clamp(32px, 6vw, 52px);
-      font-weight: 900;
-      letter-spacing: -2px;
+      font-size: clamp(36px, 7vw, 58px);
+      font-weight: 950;
+      letter-spacing: -3px;
     }
 
     .logo span {
@@ -73,29 +87,47 @@
     }
 
     .subtitle {
-      margin-top: 10px;
+      max-width: 600px;
+      margin: 12px auto 0;
       color: var(--muted);
-      font-size: 16px;
+      font-size: 15px;
+      line-height: 1.7;
     }
 
+    /* =========================
+       GENERAL CARD
+    ========================= */
+
     .card {
-      background: rgba(17, 20, 27, 0.94);
+      background: rgba(16, 19, 26, 0.96);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px;
+      border-radius: var(--radius);
+      padding: 25px;
       margin-bottom: 18px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.2);
     }
 
     .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
       font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 20px;
+      font-weight: 900;
+
+      margin-bottom: 21px;
     }
+
+    /* =========================
+       FORM
+    ========================= */
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
       gap: 16px;
     }
 
@@ -105,52 +137,68 @@
       gap: 8px;
     }
 
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
     label {
-      color: #c7ccd5;
-      font-size: 14px;
-      font-weight: 700;
+      color: #c7cdd7;
+      font-size: 13px;
+      font-weight: 800;
     }
 
     input,
     select {
       width: 100%;
-      min-height: 50px;
-      padding: 0 14px;
-      border-radius: 13px;
+      min-height: 52px;
+
+      padding: 0 15px;
+
+      border-radius: 14px;
       border: 1px solid var(--border);
-      background: #0c0f15;
+
+      background: #0b0e14;
       color: var(--text);
+
       outline: none;
-      font-size: 16px;
+      font-size: 15px;
+
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
     }
 
     input:focus,
     select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+
+      box-shadow:
+        0 0 0 3px rgba(139, 92, 246, 0.12);
     }
 
     .generate-button {
       width: 100%;
-      min-height: 58px;
-      margin-top: 22px;
+      min-height: 60px;
+
+      margin-top: 23px;
+
       border: 0;
       border-radius: 15px;
-      background: linear-gradient(
-        135deg,
-        var(--accent),
-        var(--accent2)
-      );
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-2)
+        );
+
       color: white;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 0.4px;
+
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: 0.5px;
+
       cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
     }
 
     .generate-button:hover {
@@ -163,69 +211,147 @@
       transform: none;
     }
 
+    /* =========================
+       STATS
+    ========================= */
+
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
       gap: 12px;
     }
 
     .stat {
-      background: var(--card2);
+      position: relative;
+
+      background: var(--surface-2);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 14px;
-      text-align: center;
+
+      border-radius: 17px;
+      padding: 19px 15px;
+
+      overflow: hidden;
+    }
+
+    .stat::after {
+      content: "";
+
+      position: absolute;
+      width: 65px;
+      height: 65px;
+
+      right: -25px;
+      bottom: -25px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(139, 92, 246, 0.08);
     }
 
     .stat-label {
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
+
+      font-size: 11px;
+      font-weight: 800;
+
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
     }
 
     .stat-value {
       margin-top: 8px;
-      font-size: 22px;
-      font-weight: 900;
+
+      font-size: 23px;
+      font-weight: 950;
+
+      letter-spacing: -0.5px;
     }
+
+    /* =========================
+       AI HEADER
+    ========================= */
 
     .ai-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
+      justify-content: space-between;
+
+      margin-bottom: 21px;
+    }
+
+    .ai-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
     }
 
     .ai-dot {
       width: 11px;
       height: 11px;
+
       border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 16px rgba(53, 208, 127, 0.6);
+
+      background: var(--green);
+
+      box-shadow:
+        0 0 16px rgba(53, 208, 127, 0.65);
     }
 
     .ai-title {
-      font-weight: 900;
+      font-size: 15px;
+      font-weight: 950;
       letter-spacing: 0.5px;
     }
 
+    .ai-badge {
+      padding: 7px 10px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(139, 92, 246, 0.1);
+
+      border:
+        1px solid rgba(139, 92, 246, 0.25);
+
+      color: #b99cff;
+
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
     .loading {
       display: none;
+
       text-align: center;
-      padding: 34px 15px;
+
+      padding: 45px 15px;
       color: var(--muted);
     }
 
     .spinner {
-      width: 34px;
-      height: 34px;
-      margin: 0 auto 14px;
-      border: 3px solid #292f3b;
-      border-top-color: var(--accent);
+      width: 38px;
+      height: 38px;
+
+      margin: 0 auto 17px;
+
+      border:
+        3px solid #292f3b;
+
+      border-top-color:
+        var(--accent);
+
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+
+      animation:
+        spin 0.8s linear infinite;
     }
 
     @keyframes spin {
@@ -234,62 +360,458 @@
       }
     }
 
+    /* =========================
+       PLAN
+    ========================= */
+
     .plan {
       display: none;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      line-height: 1.75;
-      color: #e7eaf0;
-      font-size: 14px;
-      background: #0c0f15;
-      border: 1px solid var(--border);
+    }
+
+    .plan-intro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin-bottom: 18px;
+
+      padding: 17px 18px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(139, 92, 246, 0.12),
+          rgba(139, 92, 246, 0.04)
+        );
+
+      border:
+        1px solid rgba(139, 92, 246, 0.2);
+
       border-radius: 17px;
+    }
+
+    .plan-intro strong {
+      font-size: 16px;
+    }
+
+    .plan-intro span {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+      display: block;
+    }
+
+    /* =========================
+       DAY CARD
+    ========================= */
+
+    .day-card {
+      background: var(--surface-2);
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 20px;
+
+      margin-bottom: 15px;
+
+      overflow: hidden;
+    }
+
+    .day-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      padding: 18px 20px;
+
+      border-bottom:
+        1px solid var(--border);
+
+      background:
+        rgba(255, 255, 255, 0.015);
+    }
+
+    .day-name {
+      font-size: 17px;
+      font-weight: 950;
+    }
+
+    .day-badge {
+      padding: 7px 11px;
+
+      border-radius: 999px;
+
+      font-size: 10px;
+      font-weight: 950;
+
+      letter-spacing: 0.5px;
+    }
+
+    .training-badge {
+      background:
+        rgba(53, 208, 127, 0.1);
+
+      border:
+        1px solid rgba(53, 208, 127, 0.2);
+
+      color: #66e69c;
+    }
+
+    .rest-badge {
+      background:
+        rgba(245, 165, 36, 0.1);
+
+      border:
+        1px solid rgba(245, 165, 36, 0.2);
+
+      color: #ffc15c;
+    }
+
+    .day-content {
       padding: 20px;
     }
 
+    /* =========================
+       SECTION INSIDE DAY
+    ========================= */
+
+    .inner-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      font-size: 13px;
+      font-weight: 900;
+
+      color: #cbd1db;
+
+      margin-bottom: 12px;
+    }
+
+    /* =========================
+       EXERCISES
+    ========================= */
+
+    .exercise-list {
+      display: grid;
+      gap: 8px;
+
+      margin-bottom: 21px;
+    }
+
+    .exercise {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 12px;
+
+      padding: 12px 14px;
+
+      background: #0c0f15;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 12px;
+    }
+
+    .exercise-name {
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .exercise-value {
+      flex-shrink: 0;
+
+      padding: 5px 8px;
+
+      border-radius: 8px;
+
+      background:
+        rgba(139, 92, 246, 0.1);
+
+      color: #c2aaff;
+
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* =========================
+       MEALS
+    ========================= */
+
+    .meal-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 9px;
+    }
+
+    .meal {
+      padding: 13px 14px;
+
+      background: #0c0f15;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 12px;
+    }
+
+    .meal-name {
+      color: #a9b1be;
+
+      font-size: 10px;
+      font-weight: 900;
+
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      margin-bottom: 5px;
+    }
+
+    .meal-text {
+      color: #e8ebf0;
+
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    /* =========================
+       DAILY VALUES
+    ========================= */
+
+    .daily-values {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 8px;
+
+      margin-top: 17px;
+    }
+
+    .daily-value {
+      text-align: center;
+
+      padding: 11px 8px;
+
+      border-radius: 11px;
+
+      background:
+        rgba(255, 255, 255, 0.025);
+
+      border:
+        1px solid var(--border);
+    }
+
+    .daily-value-label {
+      color: var(--muted);
+
+      font-size: 9px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+    }
+
+    .daily-value-number {
+      margin-top: 4px;
+
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    /* =========================
+       FINAL SUMMARY
+    ========================= */
+
+    .summary-card {
+      margin-top: 18px;
+
+      padding: 20px;
+
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(139, 92, 246, 0.13),
+          rgba(139, 92, 246, 0.04)
+        );
+
+      border:
+        1px solid rgba(139, 92, 246, 0.22);
+    }
+
+    .summary-title {
+      font-size: 15px;
+      font-weight: 950;
+
+      margin-bottom: 13px;
+    }
+
+    .summary-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+      gap: 9px;
+    }
+
+    .summary-item {
+      padding: 12px;
+
+      border-radius: 11px;
+
+      background:
+        rgba(0, 0, 0, 0.15);
+    }
+
+    .summary-label {
+      color: var(--muted);
+
+      font-size: 9px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+    }
+
+    .summary-value {
+      margin-top: 5px;
+
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    /* =========================
+       ERROR
+    ========================= */
+
     .error {
       display: none;
+
       margin-top: 16px;
+
       padding: 14px 16px;
+
       border-radius: 13px;
-      background: rgba(255, 95, 109, 0.08);
-      border: 1px solid rgba(255, 95, 109, 0.3);
+
+      background:
+        rgba(255, 95, 109, 0.08);
+
+      border:
+        1px solid rgba(255, 95, 109, 0.3);
+
       color: #ff9da6;
+
       font-size: 14px;
+      line-height: 1.5;
     }
+
+    /* =========================
+       FOOTER
+    ========================= */
 
     .footer {
       text-align: center;
+
       color: #626a77;
-      font-size: 12px;
-      margin-top: 26px;
+
+      font-size: 11px;
+
+      margin-top: 28px;
     }
 
+    /* =========================
+       MOBILE
+    ========================= */
+
     @media (max-width: 700px) {
+
       body {
-        padding: 12px 10px 40px;
+        padding:
+          12px 10px 45px;
+      }
+
+      .hero {
+        padding:
+          25px 0 28px;
+      }
+
+      .logo {
+        letter-spacing: -2px;
       }
 
       .card {
-        padding: 18px;
-        border-radius: 18px;
+        padding: 17px;
+
+        border-radius: 17px;
       }
 
       .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .field.full {
-        grid-column: auto;
+      .stats {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
+
+      .day-header {
+        padding: 15px 16px;
+      }
+
+      .day-content {
+        padding: 15px;
+      }
+
+      .meal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .daily-values {
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+      }
+
+      .summary-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .plan-intro {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 400px) {
 
       .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr 1fr;
       }
 
-      .plan {
-        padding: 15px;
-        font-size: 13px;
+      .daily-values {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .exercise {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
   </style>
@@ -300,6 +822,7 @@
   <main class="container">
 
     <section class="hero">
+
       <div class="logo">
         Gym<span>Genie</span>
       </div>
@@ -309,7 +832,12 @@
         <br />
         Unesi podatke i napravi personalizovan plan za svih 7 dana.
       </p>
+
     </section>
+
+    <!-- =========================
+         INPUT
+    ========================= -->
 
     <section class="card">
 
@@ -373,17 +901,9 @@
             </label>
 
             <select id="experience" required>
-              <option value="Početnik">
-                Početnik
-              </option>
-
-              <option value="Srednji nivo">
-                Srednji nivo
-              </option>
-
-              <option value="Napredni nivo">
-                Napredni nivo
-              </option>
+              <option value="Početnik">Početnik</option>
+              <option value="Srednji nivo">Srednji nivo</option>
+              <option value="Napredni nivo">Napredni nivo</option>
             </select>
           </div>
 
@@ -393,22 +913,16 @@
             </label>
 
             <select id="goal" required>
-              <option value="Mršavljenje">
-                Mršavljenje
-              </option>
-
+              <option value="Mršavljenje">Mršavljenje</option>
               <option value="Održavanje težine">
                 Održavanje težine
               </option>
-
               <option value="Dobijanje mišićne mase">
                 Dobijanje mišićne mase
               </option>
-
               <option value="Povećanje snage">
                 Povećanje snage
               </option>
-
               <option value="Bolja kondicija">
                 Bolja kondicija
               </option>
@@ -485,6 +999,10 @@
 
     </section>
 
+    <!-- =========================
+         STATS
+    ========================= -->
+
     <section
       id="statsCard"
       class="card"
@@ -498,9 +1016,7 @@
       <div class="stats">
 
         <div class="stat">
-          <div class="stat-label">
-            BMI
-          </div>
+          <div class="stat-label">BMI</div>
 
           <div
             class="stat-value"
@@ -511,9 +1027,7 @@
         </div>
 
         <div class="stat">
-          <div class="stat-label">
-            Kalorije
-          </div>
+          <div class="stat-label">Kalorije</div>
 
           <div
             class="stat-value"
@@ -524,9 +1038,7 @@
         </div>
 
         <div class="stat">
-          <div class="stat-label">
-            Protein
-          </div>
+          <div class="stat-label">Protein</div>
 
           <div
             class="stat-value"
@@ -537,9 +1049,7 @@
         </div>
 
         <div class="stat">
-          <div class="stat-label">
-            Voda
-          </div>
+          <div class="stat-label">Voda</div>
 
           <div
             class="stat-value"
@@ -553,6 +1063,10 @@
 
     </section>
 
+    <!-- =========================
+         AI RESULT
+    ========================= -->
+
     <section
       id="resultCard"
       class="card"
@@ -560,17 +1074,28 @@
     >
 
       <div class="ai-header">
-        <div class="ai-dot"></div>
 
-        <div class="ai-title">
-          GYMGENIE AI
+        <div class="ai-brand">
+
+          <div class="ai-dot"></div>
+
+          <div class="ai-title">
+            GYMGENIE AI
+          </div>
+
         </div>
+
+        <div class="ai-badge">
+          PERSONALIZOVANO
+        </div>
+
       </div>
 
       <div
         id="loading"
         class="loading"
       >
+
         <div class="spinner"></div>
 
         <strong>
@@ -580,6 +1105,7 @@
         <p style="margin-top: 8px;">
           Analiziram tvoje podatke i pripremam svih 7 dana.
         </p>
+
       </div>
 
       <div
@@ -596,76 +1122,132 @@
   </main>
 
   <script>
-    const form = document.getElementById("gymForm");
-    const button = document.getElementById("generateButton");
+    const form =
+      document.getElementById("gymForm");
 
-    const resultCard = document.getElementById("resultCard");
-    const loading = document.getElementById("loading");
-    const planElement = document.getElementById("plan");
+    const button =
+      document.getElementById("generateButton");
 
-    const statsCard = document.getElementById("statsCard");
+    const resultCard =
+      document.getElementById("resultCard");
 
-    const bmiElement = document.getElementById("bmi");
-    const caloriesElement = document.getElementById("calories");
-    const proteinElement = document.getElementById("protein");
-    const waterElement = document.getElementById("water");
+    const loading =
+      document.getElementById("loading");
 
-    const errorElement = document.getElementById("error");
+    const planElement =
+      document.getElementById("plan");
 
-    form.addEventListener("submit", generatePlan);
+    const statsCard =
+      document.getElementById("statsCard");
+
+    const bmiElement =
+      document.getElementById("bmi");
+
+    const caloriesElement =
+      document.getElementById("calories");
+
+    const proteinElement =
+      document.getElementById("protein");
+
+    const waterElement =
+      document.getElementById("water");
+
+    const errorElement =
+      document.getElementById("error");
+
+    form.addEventListener(
+      "submit",
+      generatePlan
+    );
 
     async function generatePlan(event) {
+
       event.preventDefault();
 
       errorElement.style.display = "none";
+
       planElement.style.display = "none";
+
       statsCard.style.display = "none";
 
       resultCard.style.display = "block";
+
       loading.style.display = "block";
 
       button.disabled = true;
-      button.textContent = "AI PRAVI TVOJ PLAN...";
+
+      button.textContent =
+        "AI PRAVI TVOJ PLAN...";
 
       const payload = {
-        height: document.getElementById("height").value,
-        weight: document.getElementById("weight").value,
-        age: document.getElementById("age").value,
-        experience: document.getElementById("experience").value,
-        goal: document.getElementById("goal").value,
-        trainingDays: document.getElementById("trainingDays").value,
-        location: document.getElementById("location").value,
-        meals: document.getElementById("meals").value
+
+        height:
+          document.getElementById("height").value,
+
+        weight:
+          document.getElementById("weight").value,
+
+        age:
+          document.getElementById("age").value,
+
+        experience:
+          document.getElementById("experience").value,
+
+        goal:
+          document.getElementById("goal").value,
+
+        trainingDays:
+          document.getElementById("trainingDays").value,
+
+        location:
+          document.getElementById("location").value,
+
+        meals:
+          document.getElementById("meals").value
       };
 
       try {
-        const response = await fetch("/api/generate", {
-          method: "POST",
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+        const response =
+          await fetch(
+            "/api/generate",
+            {
+              method: "POST",
 
-          body: JSON.stringify(payload)
-        });
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
 
-        const data = await response.json();
+              body:
+                JSON.stringify(payload)
+            }
+          );
+
+        const data =
+          await response.json();
 
         if (!response.ok) {
+
           throw new Error(
-            data.error || "Greška pri generisanju plana."
+            data.error ||
+            "Greška pri generisanju plana."
           );
         }
 
         if (!data.plan) {
+
           throw new Error(
             "AI nije vratio plan."
           );
         }
 
         if (data.stats) {
+
           bmiElement.textContent =
-            Number(data.stats.bmi).toFixed(1);
+            Number(
+              data.stats.bmi
+            ).toFixed(1);
 
           caloriesElement.textContent =
             `${data.stats.calories} kcal`;
@@ -676,11 +1258,13 @@
           waterElement.textContent =
             `${data.stats.water} L`;
 
-          statsCard.style.display = "block";
+          statsCard.style.display =
+            "block";
         }
 
-        planElement.textContent = data.plan;
-        planElement.style.display = "block";
+        renderPlan(
+          data.plan
+        );
 
         resultCard.scrollIntoView({
           behavior: "smooth",
@@ -688,16 +1272,465 @@
         });
 
       } catch (error) {
+
         errorElement.textContent =
-          error.message || "Došlo je do greške.";
+          error.message ||
+          "Došlo je do greške.";
 
-        errorElement.style.display = "block";
+        errorElement.style.display =
+          "block";
+
       } finally {
-        loading.style.display = "none";
 
-        button.disabled = false;
-        button.textContent = "GENERIRAJ MOJ PLAN";
+        loading.style.display =
+          "none";
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "GENERIRAJ MOJ PLAN";
       }
+    }
+
+    /*
+      =========================
+      PARSIRANJE AI PLANA
+      =========================
+    */
+
+    function renderPlan(rawPlan) {
+
+      const lines =
+        rawPlan
+          .replace(/\r/g, "")
+          .split("\n")
+          .map(line => line.trim())
+          .filter(Boolean);
+
+      const days = [];
+
+      let currentDay = null;
+
+      for (const line of lines) {
+
+        const dayMatch =
+          line.match(
+            /^(PONEDJELJAK|UTORAK|SRIJEDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s*[—-]\s*(TRENING|ODMOR)/i
+          );
+
+        if (dayMatch) {
+
+          currentDay = {
+            name:
+              dayMatch[1].toUpperCase(),
+
+            type:
+              dayMatch[2].toUpperCase(),
+
+            exercises: [],
+
+            meals: [],
+
+            calories: "",
+            protein: "",
+            water: ""
+          };
+
+          days.push(currentDay);
+
+          continue;
+        }
+
+        if (!currentDay) {
+          continue;
+        }
+
+        const exerciseMatch =
+          line.match(
+            /^-\s*(.+?)\s*[—-]\s*(\d+\s*x\s*.+)$/i
+          );
+
+        if (
+          exerciseMatch &&
+          currentDay.type === "TRENING"
+        ) {
+
+          currentDay.exercises.push({
+            name:
+              exerciseMatch[1].trim(),
+
+            value:
+              exerciseMatch[2].trim()
+          });
+
+          continue;
+        }
+
+        const mealMatch =
+          line.match(
+            /^-\s*(Doručak|Obrok\s+[2-6])\s*:\s*(.+)$/i
+          );
+
+        if (mealMatch) {
+
+          currentDay.meals.push({
+            name:
+              mealMatch[1],
+
+            text:
+              mealMatch[2]
+          });
+
+          continue;
+        }
+
+        const caloriesMatch =
+          line.match(
+            /^Kalorije:\s*(.+)$/i
+          );
+
+        if (caloriesMatch) {
+          currentDay.calories =
+            caloriesMatch[1];
+          continue;
+        }
+
+        const proteinMatch =
+          line.match(
+            /^Protein:\s*(.+)$/i
+          );
+
+        if (proteinMatch) {
+          currentDay.protein =
+            proteinMatch[1];
+          continue;
+        }
+
+        const waterMatch =
+          line.match(
+            /^Voda:\s*(.+)$/i
+          );
+
+        if (waterMatch) {
+          currentDay.water =
+            waterMatch[1];
+          continue;
+        }
+      }
+
+      if (!days.length) {
+
+        planElement.textContent =
+          rawPlan;
+
+        planElement.style.display =
+          "block";
+
+        return;
+      }
+
+      let html = "";
+
+      html += `
+        <div class="plan-intro">
+          <div>
+            <strong>
+              Tvoj personalizovani 7-dnevni plan
+            </strong>
+
+            <span>
+              Trening + ishrana prilagođeni tvojim podacima
+            </span>
+          </div>
+
+          <div class="ai-badge">
+            7 DANA
+          </div>
+        </div>
+      `;
+
+      for (const day of days) {
+
+        const isTraining =
+          day.type === "TRENING";
+
+        html += `
+          <article class="day-card">
+
+            <div class="day-header">
+
+              <div class="day-name">
+                ${escapeHtml(day.name)}
+              </div>
+
+              <div class="day-badge ${
+                isTraining
+                  ? "training-badge"
+                  : "rest-badge"
+              }">
+                ${
+                  isTraining
+                    ? "TRENING"
+                    : "ODMOR"
+                }
+              </div>
+
+            </div>
+
+            <div class="day-content">
+        `;
+
+        if (
+          isTraining &&
+          day.exercises.length
+        ) {
+
+          html += `
+            <div class="inner-title">
+              🏋️ VJEŽBE
+            </div>
+
+            <div class="exercise-list">
+          `;
+
+          for (
+            const exercise
+            of day.exercises
+          ) {
+
+            html += `
+              <div class="exercise">
+
+                <div class="exercise-name">
+                  ${escapeHtml(
+                    exercise.name
+                  )}
+                </div>
+
+                <div class="exercise-value">
+                  ${escapeHtml(
+                    exercise.value
+                  )}
+                </div>
+
+              </div>
+            `;
+          }
+
+          html += `
+            </div>
+          `;
+        }
+
+        if (day.meals.length) {
+
+          html += `
+            <div class="inner-title">
+              🍽️ ISHRANA
+            </div>
+
+            <div class="meal-grid">
+          `;
+
+          for (
+            const meal
+            of day.meals
+          ) {
+
+            html += `
+              <div class="meal">
+
+                <div class="meal-name">
+                  ${escapeHtml(
+                    meal.name
+                  )}
+                </div>
+
+                <div class="meal-text">
+                  ${escapeHtml(
+                    meal.text
+                  )}
+                </div>
+
+              </div>
+            `;
+          }
+
+          html += `
+            </div>
+          `;
+        }
+
+        html += `
+            <div class="daily-values">
+
+              <div class="daily-value">
+
+                <div class="daily-value-label">
+                  Kalorije
+                </div>
+
+                <div class="daily-value-number">
+                  ${escapeHtml(
+                    day.calories || "—"
+                  )}
+                </div>
+
+              </div>
+
+              <div class="daily-value">
+
+                <div class="daily-value-label">
+                  Protein
+                </div>
+
+                <div class="daily-value-number">
+                  ${escapeHtml(
+                    day.protein || "—"
+                  )}
+                </div>
+
+              </div>
+
+              <div class="daily-value">
+
+                <div class="daily-value-label">
+                  Voda
+                </div>
+
+                <div class="daily-value-number">
+                  ${escapeHtml(
+                    day.water || "—"
+                  )}
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </article>
+        `;
+      }
+
+      html += `
+        <div class="summary-card">
+
+          <div class="summary-title">
+            🎯 DNEVNI CILJEVI
+          </div>
+
+          <div class="summary-grid">
+
+            <div class="summary-item">
+              <div class="summary-label">
+                Cilj
+              </div>
+
+              <div
+                class="summary-value"
+                id="summaryGoal"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-label">
+                Kalorije
+              </div>
+
+              <div
+                class="summary-value"
+              >
+                ${
+                  caloriesElement.textContent
+                }
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-label">
+                Protein
+              </div>
+
+              <div
+                class="summary-value"
+              >
+                ${
+                  proteinElement.textContent
+                }
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-label">
+                Voda
+              </div>
+
+              <div
+                class="summary-value"
+              >
+                ${
+                  waterElement.textContent
+                }
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+      planElement.innerHTML =
+        html;
+
+      const goal =
+        document.getElementById("goal");
+
+      const summaryGoal =
+        document.getElementById(
+          "summaryGoal"
+        );
+
+      if (
+        goal &&
+        summaryGoal
+      ) {
+
+        summaryGoal.textContent =
+          goal.value;
+      }
+
+      planElement.style.display =
+        "block";
+    }
+
+    function escapeHtml(value) {
+
+      return String(value)
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
     }
   </script>
 
