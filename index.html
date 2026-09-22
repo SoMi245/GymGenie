@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GymGenie</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b0f14;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    header h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #aeb6c2;
+      font-size: 17px;
+    }
+
+    .card {
+      background: #151b23;
+      border: 1px solid #252e3a;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #cbd3dd;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      border: 1px solid #35404e;
+      background: #0d131a;
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #7c5cff;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #7c5cff;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #result {
+      display: none;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .stat {
+      background: #0d131a;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 21px;
+      margin-top: 5px;
+    }
+
+    .day {
+      border: 1px solid #2a3542;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 15px;
+      background: #10161e;
+    }
+
+    .day h3 {
+      margin-bottom: 12px;
+      font-size: 21px;
+    }
+
+    .day p {
+      color: #c5ccd5;
+      line-height: 1.6;
+      margin: 5px 0;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 7px;
+      background: #25203d;
+      color: #bcaeff;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      header h1 {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>GymGenie 🧞</h1>
+    <p>AI fitness & nutrition planner</p>
+  </header>
+
+  <div class="card">
+    <h2>Napravi svoj plan</h2>
+
+    <div class="form-grid">
+
+      <div>
+        <label>Visina (cm)</label>
+        <input id="height" type="number" placeholder="npr. 180">
+      </div>
+
+      <div>
+        <label>Težina (kg)</label>
+        <input id="weight" type="number" placeholder="npr. 80">
+      </div>
+
+      <div>
+        <label>Godine</label>
+        <input id="age" type="number" placeholder="npr. 25">
+      </div>
+
+      <div>
+        <label>Iskustvo</label>
+        <select id="experience">
+          <option>Početnik</option>
+          <option>Srednji nivo</option>
+          <option>Napredni</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Cilj</label>
+        <select id="goal">
+          <option>Dobijanje mišića</option>
+          <option>Mršavljenje</option>
+          <option>Održavanje težine</option>
+          <option>Kondicija</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Treninga sedmično</label>
+        <select id="days">
+          <option>2</option>
+          <option>3</option>
+          <option selected>4</option>
+          <option>5</option>
+          <option>6</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Mjesto treninga</label>
+        <select id="location">
+          <option>Teretana</option>
+          <option>Kuća</option>
+          <option>Bez opreme</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Obroka dnevno</label>
+        <select id="meals">
+          <option>3</option>
+          <option selected>4</option>
+          <option>5</option>
+          <option>6</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button onclick="generatePlan()">GENERIRAJ MOJ PLAN</button>
+  </div>
+
+  <div id="result">
+
+    <div class="card">
+      <h2>Tvoj plan</h2>
+
+      <div class="stats">
+        <div class="stat">
+          BMI
+          <strong id="bmi">-</strong>
+        </div>
+
+        <div class="stat">
+          Kalorije
+          <strong id="calories">-</strong>
+        </div>
+
+        <div class="stat">
+          Proteini
+          <strong id="protein">-</strong>
+        </div>
+
+        <div class="stat">
+          Voda
+          <strong id="water">-</strong>
+        </div>
+      </div>
+
+      <div id="weeklyPlan"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function generatePlan() {
+
+  const height = Number(document.getElementById("height").value);
+  const weight = Number(document.getElementById("weight").value);
+  const age = Number(document.getElementById("age").value);
+  const goal = document.getElementById("goal").value;
+  const trainingDays = Number(document.getElementById("days").value);
+  const location = document.getElementById("location").value;
+  const meals = Number(document.getElementById("meals").value);
+
+  if (!height || !weight || !age) {
+    alert("Unesi visinu, težinu i godine.");
+    return;
+  }
+
+  const bmiValue = weight / Math.pow(height / 100, 2);
+
+  let calories = weight * 30;
+
+  if (goal === "Dobijanje mišića") {
+    calories += 300;
+  }
+
+  if (goal === "Mršavljenje") {
+    calories -= 300;
+  }
+
+  const protein = Math.round(weight * 1.8);
+  const water = (weight * 0.035).toFixed(1);
+
+  document.getElementById("bmi").textContent = bmiValue.toFixed(1);
+  document.getElementById("calories").textContent = Math.round(calories) + " kcal";
+  document.getElementById("protein").textContent = protein + " g";
+  document.getElementById("water").textContent = water + " L";
+
+  const days = [
+    "Ponedjeljak",
+    "Utorak",
+    "Srijeda",
+    "Četvrtak",
+    "Petak",
+    "Subota",
+    "Nedjelja"
+  ];
+
+  const workouts = [
+    "Grudi + triceps",
+    "Leđa + biceps",
+    "Odmor i lagana šetnja",
+    "Noge + core",
+    "Ramena + ruke",
+    "Kardio / kondicija",
+    "Potpuni odmor"
+  ];
+
+  let html = "";
+
+  days.forEach((day, index) => {
+
+    const isRest = index === 2 || index === 6;
+
+    html += `
+      <div class="day">
+
+        <span class="tag">${day}</span>
+
+        <h3>${isRest ? "🛌 Dan odmora" : "🏋️ " + workouts[index]}</h3>
+
+        ${
+          isRest
+          ? `<p><strong>Oporavak:</strong> lagana šetnja, istezanje i dovoljno sna.</p>`
+          : `
+            <p><strong>Vježbe:</strong> 4–5 vježbi</p>
+            <p><strong>Serije:</strong> 3–4</p>
+            <p><strong>Ponavljanja:</strong> 8–12</p>
+            <p><strong>Odmor:</strong> 60–120 sekundi</p>
+            <p><strong>Lokacija:</strong> ${location}</p>
+          `
+        }
+
+        <p><strong>🍳 Doručak:</strong> jaja + zobene pahuljice + voće</p>
+        <p><strong>🥗 Ručak:</strong> piletina + riža + povrće</p>
+        <p><strong>🍎 Užina:</strong> grčki jogurt + voće</p>
+        <p><strong>🍽️ Večera:</strong> tuna/piletina + salata + krompir</p>
+
+        <p><strong>💧 Voda:</strong> oko ${water} L</p>
+
+      </div>
+    `;
+  });
+
+  document.getElementById("weeklyPlan").innerHTML = html;
+  document.getElementById("result").style.display = "block";
+
+  window.scrollTo({
+    top: document.getElementById("result").offsetTop,
+    behavior: "smooth"
+  });
+}
+
+</script>
+
+</body>
+</html>
