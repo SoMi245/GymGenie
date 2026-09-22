@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       trainingDays,
       location,
       meals
-    } = req.body;
+    } = req.body || {};
 
     if (!height || !weight || !age) {
       return res.status(400).json({
@@ -24,11 +24,10 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-Ti si GymGenie, personalni AI fitness i nutrition trener.
+Ti si GymGenie, AI fitness i nutrition trener.
 
-Napravi potpuno personalizovan plan za korisnika.
+Napravi personalizovan plan za korisnika:
 
-PODACI KORISNIKA:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
@@ -40,47 +39,30 @@ Obroka dnevno: ${meals}
 
 NAPRAVI PLAN ZA SVIH 7 DANA.
 
-Za SVAKI dan obavezno napiši:
-
-DAN 1 - PONEDJELJAK
-- da li je trening ili odmor
-- konkretne vježbe
-- serije
-- ponavljanja
-- odmor između serija
+Za svaki dan napiši:
+- da li je TRENING ili ODMOR
+- ako je trening: konkretne vježbe, serije, ponavljanja i odmor
 - obroke za taj dan
 - približne kalorije
 - približne proteine
-- unos vode
+- preporuku vode
 
-Isto uradi za:
-DAN 2 - UTORAK
-DAN 3 - SRIJEDA
-DAN 4 - ČETVRTAK
-DAN 5 - PETAK
-DAN 6 - SUBOTA
-DAN 7 - NEDJELJA
+Koristi samo opremu dostupnu na navedenom mjestu treninga.
 
-Plan mora biti stvarno prilagođen podacima korisnika.
+Broj trening dana mora odgovarati izboru korisnika.
 
-Ako je korisnik početnik, koristi jednostavnije i sigurnije vježbe.
-Ako trenira kod kuće, koristi samo opremu koju ima.
-Ako trenira u teretani, koristi vježbe i sprave dostupne u teretani.
-Obavezno ubaci dane oporavka prema broju treninga sedmično.
+Na kraju napiši:
+UKUPNI CILJ
+DNEVNE KALORIJE
+DNEVNI PROTEIN
+DNEVNA VODA
 
-Piši jasno, pregledno i praktično na srpskom/bosanskom jeziku.
-
-Na kraju dodaj:
-- UKUPNI CILJ
-- PREPORUČENI DNEVNI KALORIJSKI RASPON
-- PREPORUČENI PROTEIN
-- PREPORUKU ZA VODU
-
-Napomena: kalorije, proteini i voda su okvirne preporuke, a ne medicinski savjet.
+Piši jasno i pregledno na srpskom/bosanskom jeziku.
+Kalorije, protein i voda su okvirne preporuke, a ne medicinski savjet.
 `;
 
     const response = await fetch(
-      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/run/@cf/zai-org/glm-4.7-flash",
+      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/v1/chat/completions",
       {
         method: "POST",
         headers: {
@@ -88,6 +70,7 @@ Napomena: kalorije, proteini i voda su okvirne preporuke, a ne medicinski savjet
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
+          model: "@cf/zai-org/glm-4.7-flash",
           messages: [
             {
               role: "system",
@@ -97,26 +80,47 @@ Napomena: kalorije, proteini i voda su okvirne preporuke, a ne medicinski savjet
               role: "user",
               content: prompt
             }
-          ]
+          ],
+          max_completion_tokens: 3500,
+          reasoning_effort: "low",
+          temperature: 0.7
         })
       }
     );
 
     const data = await response.json();
 
-    if (!response.ok || !data.success) {
+    if (!response.ok) {
+      console.error("Cloudflare API error:", data);
+
       return res.status(response.status || 500).json({
         error:
-          data.errors?.[0]?.message ||
+          data?.error?.message ||
+          data?.errors?.[0]?.message ||
           "Cloudflare AI greška."
       });
     }
 
+    const plan =
+      data?.choices?.[0]?.message?.content ||
+      data?.result?.response ||
+      "";
+
+    if (!plan) {
+      console.error("Cloudflare returned no text:", data);
+
+      return res.status(502).json({
+        error: "AI nije vratio tekst plana."
+      });
+    }
+
     return res.status(200).json({
-      plan: data.result?.response || "AI nije vratio plan."
+      plan
     });
 
   } catch (error) {
+    console.error("Server error:", error);
+
     return res.status(500).json({
       error: "Greška servera."
     });
