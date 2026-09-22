@@ -1,8 +1,7 @@
+```javascript
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
@@ -24,41 +23,42 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-Ti si GymGenie, AI fitness i nutrition trener.
+Ti si GymGenie AI trener.
 
-Napravi personalizovan plan za korisnika:
-
+Podaci:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
 Treninga sedmično: ${trainingDays}
-Mjesto treninga: ${location}
+Mjesto: ${location}
 Obroka dnevno: ${meals}
 
-NAPRAVI PLAN ZA SVIH 7 DANA.
+Napravi KRATAK i JASAN plan za svih 7 dana.
 
-Za svaki dan napiši:
-- da li je TRENING ili ODMOR
-- ako je trening: konkretne vježbe, serije, ponavljanja i odmor
-- obroke za taj dan
-- približne kalorije
-- približne proteine
-- preporuku vode
+Za svaki dan napiši samo:
+DAN + TRENING/ODMOR
+- 3 do 5 glavnih vježbi ako je trening
+- serije x ponavljanja
+- kratke obroke prema broju obroka
+- okvirne kalorije
+- protein
+- voda
 
-Koristi samo opremu dostupnu na navedenom mjestu treninga.
-
-Broj trening dana mora odgovarati izboru korisnika.
+Ne objašnjavaj vježbe.
+Ne piši uvod.
+Ne ponavljaj podatke korisnika.
+Ne dodaj nepotreban tekst.
 
 Na kraju napiši:
-UKUPNI CILJ
-DNEVNE KALORIJE
-DNEVNI PROTEIN
-DNEVNA VODA
+CILJ:
+KALORIJE:
+PROTEIN:
+VODA:
 
-Piši jasno i pregledno na srpskom/bosanskom jeziku.
-Kalorije, protein i voda su okvirne preporuke, a ne medicinski savjet.
+Koristi srpski/bosanski jezik.
+Kalorije, protein i voda su okvirne preporuke, ne medicinski savjet.
 `;
 
     const response = await fetch(
@@ -74,16 +74,16 @@ Kalorije, protein i voda su okvirne preporuke, a ne medicinski savjet.
           messages: [
             {
               role: "system",
-              content: "You are GymGenie, a helpful AI fitness and nutrition planner."
+              content: "You are GymGenie. Give short, practical fitness plans."
             },
             {
               role: "user",
               content: prompt
             }
           ],
-          max_completion_tokens: 3500,
+          max_completion_tokens: 1800,
           reasoning_effort: "low",
-          temperature: 0.7
+          temperature: 0.5
         })
       }
     );
@@ -114,9 +114,7 @@ Kalorije, protein i voda su okvirne preporuke, a ne medicinski savjet.
       });
     }
 
-    return res.status(200).json({
-      plan
-    });
+    return res.status(200).json({ plan });
 
   } catch (error) {
     console.error("Server error:", error);
@@ -126,3 +124,4 @@ Kalorije, protein i voda su okvirne preporuke, a ne medicinski savjet.
     });
   }
 }
+```
