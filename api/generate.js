@@ -42,13 +42,6 @@ export default async function handler(req, res) {
       });
     }
 
-    /*
-      OSNOVNE OKVIRNE VRIJEDNOSTI
-
-      Frontend više NE računa ove vrijednosti.
-      Backend ih izračuna jednom i šalje ih zajedno sa planom.
-    */
-
     const bmi = w / Math.pow(h / 100, 2);
 
     let calories = Math.round(w * 30);
@@ -67,16 +60,38 @@ export default async function handler(req, res) {
     const water = Math.round(w * 0.035 * 10) / 10;
 
     /*
-      Raspored treninga.
-      AI mora koristiti TAČNO ove dane.
+      TAČAN RASPORED TRENINGA
     */
 
     const schedules = {
       1: ["PONEDJELJAK"],
-      2: ["PONEDJELJAK", "ČETVRTAK"],
-      3: ["PONEDJELJAK", "SRIJEDA", "PETAK"],
-      4: ["PONEDJELJAK", "UTORAK", "ČETVRTAK", "SUBOTA"],
-      5: ["PONEDJELJAK", "UTORAK", "ČETVRTAK", "PETAK", "SUBOTA"],
+
+      2: [
+        "PONEDJELJAK",
+        "ČETVRTAK"
+      ],
+
+      3: [
+        "PONEDJELJAK",
+        "SRIJEDA",
+        "PETAK"
+      ],
+
+      4: [
+        "PONEDJELJAK",
+        "UTORAK",
+        "ČETVRTAK",
+        "SUBOTA"
+      ],
+
+      5: [
+        "PONEDJELJAK",
+        "UTORAK",
+        "ČETVRTAK",
+        "PETAK",
+        "SUBOTA"
+      ],
+
       6: [
         "PONEDJELJAK",
         "UTORAK",
@@ -85,6 +100,7 @@ export default async function handler(req, res) {
         "PETAK",
         "SUBOTA"
       ],
+
       7: [
         "PONEDJELJAK",
         "UTORAK",
@@ -96,12 +112,10 @@ export default async function handler(req, res) {
       ]
     };
 
-    const trainingSchedule = schedules[d].join(", ");
+    const trainingSchedule = schedules[d];
 
     /*
-      Dozvoljene vježbe.
-
-      AI ne smije izmišljati nazive.
+      DOZVOLJENE VJEŽBE
     */
 
     let exerciseRules = "";
@@ -109,6 +123,7 @@ export default async function handler(req, res) {
     if (location === "Kuća - bez opreme") {
       exerciseRules = `
 DOZVOLJENE VJEŽBE:
+
 - Sklekovi
 - Sklekovi na koljenima
 - Uski sklekovi
@@ -128,6 +143,7 @@ DOZVOLJENE VJEŽBE:
 - Superman
 
 ZABRANJENO:
+
 - Zgibovi
 - Bench press
 - Bučice
@@ -139,6 +155,7 @@ ZABRANJENO:
     } else if (location === "Kuća - osnovna oprema") {
       exerciseRules = `
 DOZVOLJENE VJEŽBE:
+
 - Sklekovi
 - Uski sklekovi
 - Široki sklekovi
@@ -162,6 +179,7 @@ DOZVOLJENE VJEŽBE:
     } else {
       exerciseRules = `
 DOZVOLJENE VJEŽBE:
+
 - Bench press
 - Incline bench press
 - Chest press
@@ -188,12 +206,20 @@ DOZVOLJENE VJEŽBE:
 `;
     }
 
+    /*
+      AI PROMPT
+
+      BITNO:
+      AI mora koristiti TAČAN broj treninga
+      i TAČAN broj obroka.
+    */
+
     const prompt = `
 TI SI GYMGENIE AI TRENER.
 
-NAPRAVI KRATAK, REALAN I PERSONALIZOVAN PLAN ZA 7 DANA.
+NAPRAVI PLAN ZA TAČNO 7 DANA.
 
-PODACI:
+PODACI KORISNIKA:
 
 Visina: ${h} cm
 Težina: ${w} kg
@@ -204,64 +230,87 @@ Treninga sedmično: ${d}
 Mjesto treninga: ${location}
 Obroka dnevno: ${m}
 
-TAČAN RASPORED TRENINGA:
-${trainingSchedule}
+==================================================
+STROGA PRAVILA ZA TRENING
+==================================================
+
+MORAŠ imati TAČNO ${d} dana sa treningom.
+
+MORAŠ koristiti OVE I SAMO OVE DANE:
+
+${trainingSchedule.map(day => `- ${day}`).join("\n")}
+
+SVI OSTALI DANI MORAJU BITI:
+
+- ODMOR
+
+NE SMIJEŠ dodati trening na drugi dan.
+
+NE SMIJEŠ imati više od ${d} treninga.
+
+NE SMIJEŠ imati manje od ${d} treninga.
+
+==================================================
+STROGA PRAVILA ZA OBROKE
+==================================================
+
+SVAKI OD 7 DANA MORA imati TAČNO ${m} obroka.
+
+Ako je broj obroka ${m}, svaki dan mora imati ${m} i SAMO ${m} stavki.
+
+NEMA dodatnih obroka.
+
+NEMA manje obroka.
+
+NEMA više obroka.
+
+==================================================
+TRENING
+==================================================
+
+Na svakom trening danu koristi 4 do 5 vježbi.
+
+Ne ponavljaj potpuno isti trening.
+
+Koristi samo dozvoljene vježbe.
 
 ${exerciseRules}
 
-STROGA PRAVILA:
+==================================================
+ISHRANA
+==================================================
 
-1. Moraš prikazati svih 7 dana.
+Svaki dan koristi različite kombinacije hrane.
 
-2. TRENING mora biti samo na danima iz ovog rasporeda:
-${trainingSchedule}
+Nemoj kopirati kompletan jelovnik drugog dana.
 
-3. Svi ostali dani moraju biti ODMOR.
+Koristi normalne namirnice.
 
-4. Na dan treninga koristi 4 do 5 vježbi.
+Ne izmišljaj nepostojeće namirnice.
 
-5. Koristi samo vježbe iz DOZVOLJENE LISTE.
+Kalorije, protein i voda su OKVIRNE vrijednosti.
 
-6. Ne izmišljaj nazive vježbi.
+Cilj korisnika je:
 
-7. Ne koristi engleske nazive ako postoji normalan naziv na srpskom/bosanskom.
+${goal}
 
-8. Ne ponavljaj potpuno isti trening.
-
-9. Trening prilagodi:
-- nivou: ${experience}
-- cilju: ${goal}
-- mjestu: ${location}
-
-10. Svaki dan mora imati TAČNO ${m} obroka.
-
-11. Nemoj koristiti isti kompletan jelovnik svakog dana.
-
-12. Koristi normalne namirnice i različite izvore proteina, ugljikohidrata, voća i povrća.
-
-13. Kalorije, protein i voda su OKVIRNE vrijednosti.
-
-14. Koristi ove vrijednosti SVAKI DAN:
+==================================================
+VRIJEDNOSTI
+==================================================
 
 Kalorije: ${calories} kcal
 Protein: ${protein} g
 Voda: ${water} L
 
-15. Na kraju koristi potpuno iste vrijednosti.
+==================================================
+FORMAT
+==================================================
 
-16. Bez uvoda.
+MORAŠ prikazati svih 7 dana.
 
-17. Bez objašnjenja vježbi.
+Za trening:
 
-18. Bez napomena.
-
-19. Bez ponavljanja instrukcija.
-
-20. Nakon NEDELJE odmah završi.
-
-FORMAT:
-
-PONEDJELJAK — TRENING
+DAN — TRENING
 
 Vježbe:
 - Vježba — 3 x 10
@@ -272,41 +321,51 @@ Vježbe:
 Obroci:
 - Doručak: ...
 - Obrok 2: ...
-- Ručak: ...
-- Večera: ...
-
+- Obrok 3: ...
+${m >= 4 ? "- Obrok 4: ...\n" : ""}${m >= 5 ? "- Obrok 5: ...\n" : ""}${m >= 6 ? "- Obrok 6: ...\n" : ""}
 Kalorije: ${calories} kcal
 Protein: ${protein} g
 Voda: ${water} L
 
-Za ODMOR napiši:
+Za dan odmora:
 
 DAN — ODMOR
 
 Obroci:
-- ...
-- ...
-
+- Doručak: ...
+- Obrok 2: ...
+- Obrok 3: ...
+${m >= 4 ? "- Obrok 4: ...\n" : ""}${m >= 5 ? "- Obrok 5: ...\n" : ""}${m >= 6 ? "- Obrok 6: ...\n" : ""}
 Kalorije: ${calories} kcal
 Protein: ${protein} g
 Voda: ${water} L
 
-Na kraju:
+Na samom kraju:
 
 CILJ: ${goal}
 KALORIJE: ${calories} kcal
 PROTEIN: ${protein} g
 VODA: ${water} L
+
+NEMOJ dodavati ništa poslije toga.
 `;
+
+    /*
+      CLOUDFLARE AI
+    */
 
     const response = await fetch(
       "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/v1/chat/completions",
       {
         method: "POST",
+
         headers: {
-          "Authorization": "Bearer " + process.env.CLOUDFLARE_API_TOKEN,
+          "Authorization":
+            "Bearer " + process.env.CLOUDFLARE_API_TOKEN,
+
           "Content-Type": "application/json"
         },
+
         body: JSON.stringify({
           model: "@cf/zai-org/glm-4.7-flash",
 
@@ -314,8 +373,9 @@ VODA: ${water} L
             {
               role: "system",
               content:
-                "You are GymGenie. Follow the user's data exactly. Use only real exercises from the provided list. Never invent exercise names. Return only the requested 7-day plan."
+                "You are GymGenie. Follow the requested number of training days and meals EXACTLY. Never add or remove training days or meals. Return only the requested 7-day plan."
             },
+
             {
               role: "user",
               content: prompt
@@ -326,8 +386,9 @@ VODA: ${water} L
             enable_thinking: false
           },
 
-          max_completion_tokens: 1800,
-          temperature: 0.2
+          max_completion_tokens: 2200,
+
+          temperature: 0.15
         })
       }
     );
@@ -354,24 +415,219 @@ VODA: ${water} L
     } else if (Array.isArray(content)) {
       plan = content
         .filter(
-          item => item?.type === "text" || typeof item === "string"
+          item =>
+            item?.type === "text" ||
+            typeof item === "string"
         )
         .map(item =>
-          typeof item === "string" ? item : item.text || ""
+          typeof item === "string"
+            ? item
+            : item.text || ""
         )
         .join("");
     }
 
     if (!plan.trim()) {
-      console.error("Cloudflare response:", JSON.stringify(data));
-
       return res.status(502).json({
         error: "AI nije vratio plan."
       });
     }
 
+    /*
+      ==================================================
+      AUTOMATSKA VALIDACIJA
+      ==================================================
+
+      AI rezultat NE prolazi ako broj treninga nije tačan
+      ili ako broj obroka nije tačan.
+    */
+
+    const normalizedPlan = plan
+      .toUpperCase()
+      .replace(/\r/g, "");
+
+    const dayNames = [
+      "PONEDJELJAK",
+      "UTORAK",
+      "SRIJEDA",
+      "ČETVRTAK",
+      "PETAK",
+      "SUBOTA",
+      "NEDELJA"
+    ];
+
+    /*
+      1. PROVJERA DA POSTOJI SVIH 7 DANA
+    */
+
+    const missingDays = dayNames.filter(
+      day => !normalizedPlan.includes(day)
+    );
+
+    if (missingDays.length > 0) {
+      console.error(
+        "Nedostaju dani:",
+        missingDays
+      );
+
+      return res.status(502).json({
+        error:
+          "AI je napravio neispravan plan. Nisu prikazani svi dani."
+      });
+    }
+
+    /*
+      2. PROVJERA BROJA TRENINGA
+
+      Tražimo "DAN — TRENING".
+    */
+
+    const trainingMatches =
+      normalizedPlan.match(
+        /(?:PONEDJELJAK|UTORAK|SRIJEDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s*[—-]\s*TRENING/g
+      ) || [];
+
+    const actualTrainingDays =
+      trainingMatches.length;
+
+    if (actualTrainingDays !== d) {
+      console.error(
+        "Pogrešan broj trening dana:",
+        actualTrainingDays,
+        "očekivano:",
+        d
+      );
+
+      return res.status(502).json({
+        error:
+          `AI je napravio ${actualTrainingDays} treninga umjesto ${d}. Pokušaj ponovo.`
+      });
+    }
+
+    /*
+      3. PROVJERA BROJA ODMORA
+    */
+
+    const restMatches =
+      normalizedPlan.match(
+        /(?:PONEDJELJAK|UTORAK|SRIJEDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s*[—-]\s*ODMOR/g
+      ) || [];
+
+    const actualRestDays =
+      restMatches.length;
+
+    if (actualRestDays !== 7 - d) {
+      console.error(
+        "Pogrešan broj dana odmora:",
+        actualRestDays,
+        "očekivano:",
+        7 - d
+      );
+
+      return res.status(502).json({
+        error:
+          "AI je napravio neispravan raspored treninga i odmora. Pokušaj ponovo."
+      });
+    }
+
+    /*
+      4. PROVJERA BROJA OBROKA
+
+      Svaki dan mora imati TAČNO ${m} obroka.
+
+      Brojimo:
+      Doručak
+      Obrok 2
+      Obrok 3
+      Obrok 4
+      Obrok 5
+      Obrok 6
+    */
+
+    const mealLabels = [
+      "DORUČAK",
+      "OBROK 2",
+      "OBROK 3",
+      "OBROK 4",
+      "OBROK 5",
+      "OBROK 6"
+    ];
+
+    /*
+      Podijelimo plan na 7 dnevnih blokova.
+    */
+
+    const dayRegex =
+      /(?:PONEDJELJAK|UTORAK|SRIJEDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s*[—-]/g;
+
+    const dayPositions = [];
+
+    let match;
+
+    while ((match = dayRegex.exec(normalizedPlan)) !== null) {
+      dayPositions.push({
+        index: match.index,
+        day: match[0]
+      });
+    }
+
+    if (dayPositions.length !== 7) {
+      return res.status(502).json({
+        error:
+          "AI nije pravilno podijelio plan na 7 dana. Pokušaj ponovo."
+      });
+    }
+
+    for (let i = 0; i < 7; i++) {
+      const start = dayPositions[i].index;
+
+      const end =
+        i < 6
+          ? dayPositions[i + 1].index
+          : normalizedPlan.length;
+
+      const dayBlock =
+        normalizedPlan.slice(start, end);
+
+      let mealCount = 0;
+
+      for (const label of mealLabels) {
+        if (
+          dayBlock.includes(
+            `- ${label}:`
+          ) ||
+          dayBlock.includes(
+            `-${label}:`
+          )
+        ) {
+          mealCount++;
+        }
+      }
+
+      /*
+        Ako je format drugačiji, pokušaj
+        dodatno prebrojati same oznake.
+      */
+
+      if (mealCount !== m) {
+        console.error(
+          `Dan ${i + 1}: ${mealCount} obroka, očekivano ${m}`
+        );
+
+        return res.status(502).json({
+          error:
+            `AI je napravio neispravan broj obroka na danu ${i + 1}. Pokušaj ponovo.`
+        });
+      }
+    }
+
+    /*
+      SVE JE PROŠLO VALIDACIJU
+    */
+
     return res.status(200).json({
       plan,
+
       stats: {
         bmi: Number(bmi.toFixed(1)),
         calories,
@@ -381,10 +637,15 @@ VODA: ${water} L
     });
 
   } catch (error) {
-    console.error("Server error:", error);
+    console.error(
+      "Server error:",
+      error
+    );
 
     return res.status(500).json({
-      error: "Greška servera: " + (error?.message || "Nepoznata greška.")
+      error:
+        "Greška servera: " +
+        (error?.message || "Nepoznata greška.")
     });
   }
 }
