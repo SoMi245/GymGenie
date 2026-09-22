@@ -1,124 +1,238 @@
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-  }
+```html
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  try {
-    const {
-      height,
-      weight,
-      age,
-      experience,
-      goal,
-      trainingDays,
-      location,
-      meals
-    } = req.body;
+  <title>GymGenie - AI Fitness Planner</title>
 
-    if (!height || !weight || !age) {
-      return res.status(400).json({
-        error: "Nedostaju visina, težina ili godine."
-      });
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    const prompt = `
-Ti si GymGenie, personalni AI fitness i nutrition trener.
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, #172033 0%, #0b0f17 45%, #070a10 100%);
+      color: #ffffff;
+      min-height: 100vh;
+    }
 
-Napravi potpuno personalizovan plan za korisnika.
+    .container {
+      width: 100%;
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
 
-PODACI KORISNIKA:
-Visina: ${height} cm
-Težina: ${weight} kg
-Godine: ${age}
-Iskustvo: ${experience}
-Cilj: ${goal}
-Treninga sedmično: ${trainingDays}
-Mjesto treninga: ${location}
-Obroka dnevno: ${meals}
+    .hero {
+      text-align: center;
+      margin-bottom: 35px;
+    }
 
-NAPRAVI PLAN ZA SVIH 7 DANA.
+    .logo {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 10px;
+    }
 
-Za SVAKI dan obavezno napiši:
+    .logo span {
+      color: #00e676;
+    }
 
-DAN 1 - PONEDJELJAK
-- da li je trening ili odmor
-- konkretne vježbe
-- serije
-- ponavljanja
-- odmor između serija
-- obroke za taj dan
-- približne kalorije
-- približne proteine
-- unos vode
+    .subtitle {
+      color: #9ba7b8;
+      font-size: 18px;
+      line-height: 1.5;
+    }
 
-Isto uradi za:
-DAN 2 - UTORAK
-DAN 3 - SRIJEDA
-DAN 4 - ČETVRTAK
-DAN 5 - PETAK
-DAN 6 - SUBOTA
-DAN 7 - NEDJELJA
+    .card {
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid #263244;
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 25px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    }
 
-Plan mora biti stvarno prilagođen podacima korisnika.
+    .card h2 {
+      margin-bottom: 22px;
+      font-size: 25px;
+    }
 
-Ako je korisnik početnik, koristi jednostavnije i sigurnije vježbe.
-Ako trenira kod kuće, koristi samo opremu koju ima.
-Ako trenira u teretani, koristi vježbe i sprave dostupne u teretani.
-Obavezno ubaci dane oporavka prema broju treninga sedmično.
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
 
-Piši jasno, pregledno i praktično na srpskom/bosanskom jeziku.
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-Na kraju dodaj:
-- UKUPNI CILJ
-- PREPORUČENI DNEVNI KALORIJSKI RASPON
-- PREPORUČENI PROTEIN
-- PREPORUKU ZA VODU
+    .field label {
+      color: #cbd5e1;
+      font-size: 14px;
+      font-weight: 700;
+    }
 
-Napomena: kalorije, proteini i voda su okvirne preporuke, a ne medicinski savjet.
-`;
+    .field input,
+    .field select {
+      width: 100%;
+      background: #0d1420;
+      color: white;
+      border: 1px solid #344155;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 16px;
+      outline: none;
+    }
 
-    const response = await fetch(
-      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/run/@cf/zai-org/glm-4.7-flash",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "system",
-              content: "You are GymGenie, a helpful AI fitness and nutrition planner."
-            },
-            {
-              role: "user",
-              content: prompt
-            }
-          ]
-        })
+    .field input:focus,
+    .field select:focus {
+      border-color: #00e676;
+    }
+
+    .generate-button {
+      width: 100%;
+      margin-top: 25px;
+      border: none;
+      border-radius: 14px;
+      padding: 17px 20px;
+      background: #00e676;
+      color: #06110a;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .generate-button:hover {
+      transform: translateY(-1px);
+      background: #00f184;
+    }
+
+    .generate-button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      transform: none;
+    }
+
+    #result {
+      display: none;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat {
+      background: #0d1420;
+      border: 1px solid #263244;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-title {
+      color: #8e9aad;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 900;
+      color: #00e676;
+    }
+
+    .plan-box {
+      background: #0d1420;
+      border: 1px solid #263244;
+      border-radius: 16px;
+      padding: 25px;
+      overflow: hidden;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(0, 230, 118, 0.12);
+      color: #00e676;
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .plan-box h3 {
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    #weeklyPlan {
+      color: #d8dee8;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .plan-text {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px 10px;
+      color: #9ba7b8;
+    }
+
+    .loading strong {
+      display: block;
+      color: #00e676;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #697586;
+      font-size: 13px;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 25px 14px 50px;
       }
-    );
 
-    const data = await response.json();
+      .logo {
+        font-size: 38px;
+      }
 
-    if (!response.ok || !data.success) {
-      return res.status(response.status || 500).json({
-        error:
-          data.errors?.[0]?.message ||
-          "Cloudflare AI greška."
-      });
-    }
+      .subtitle {
+        font-size: 15px;
+      }
 
-    return res.status(200).json({
-      plan: data.result?.response || "AI nije vratio plan."
-    });
+      .card {
+        padding: 20px;
+      }
 
-  } catch (error) {
-    return res.status(500).json({
-      error: "Greška servera."
-    });
-  }
-}
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        g
+```
