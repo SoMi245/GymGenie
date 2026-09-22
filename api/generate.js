@@ -18,77 +18,58 @@ export default async function handler(req, res) {
     } = req.body || {};
 
     const prompt = `
-Ti si GymGenie AI personalni trener i nutricionista.
+Ti si GymGenie AI trener.
 
-NAPRAVI PERSONALIZOVAN PLAN NA OSNOVU OVIH PODATAKA:
-
+PODACI KORISNIKA:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
-Broj treninga sedmično: ${trainingDays}
+Treninga sedmično: ${trainingDays}
 Mjesto treninga: ${location}
-Broj obroka dnevno: ${meals}
+Obroka dnevno: ${meals}
 
-STROGA PRAVILA:
+NAPRAVI PERSONALIZOVAN PLAN ZA TAČNO 7 DANA.
 
-1. Napravi TAČNO 7 dana, od PONEDJELJKA do NEDELJE.
+VAŽNA PRAVILA ZA TRENING:
 
-2. Broj dana sa treningom mora odgovarati korisnikovom izboru:
-${trainingDays} dana treninga sedmično.
+- Tačno ${trainingDays} dana moraju biti TRENING.
+- Ostali dani su ODMOR ili AKTIVNI ODMOR.
+- Rasporedi treninge kroz sedmicu tako da postoji dovoljan odmor.
+- Prilagodi vježbe cilju i nivou korisnika.
+- Nikada nemoj izmišljati nazive vježbi.
+- Koristi samo stvarne i poznate nazive vježbi.
+- Ne prevodi nazive vježbi bukvalno ako bi prevod bio nejasan. Koristi uobičajeni naziv, npr. sklekovi, čučanj, iskorak, plank, zgibovi, veslanje, bench press.
+- Ne ponavljaj isti kompletan trening.
+- Ako je TERETANA, koristi sprave, šipku, bučice i sajle.
+- Ako je KUĆA - BEZ OPREME, koristi samo vježbe sa sopstvenom težinom.
+- Ako je KUĆA - OSNOVNA OPREMA, koristi samo osnovnu opremu.
+- Na svakom treningu navedi 4-5 vježbi.
+- Za svaku vježbu navedi serije i ponavljanja.
 
-3. Ostatak dana moraju biti ODMOR ili AKTIVNI ODMOR.
+ISHRANA:
 
-4. Vježbe MORAŠ prilagoditi mjestu treninga:
-- Teretana = sprave, šipke, bučice i kablovi.
-- Kuća - bez opreme = samo vježbe sa sopstvenom težinom.
-- Kuća - osnovna oprema = koristi bučice, elastične trake i osnovnu opremu.
+- Navedi tačno ${meals} obroka svakog dana.
+- Obroci neka budu različiti i realni.
+- Koristi normalne namirnice.
+- Prilagodi okvirnu ishranu cilju korisnika.
+- Kalorije, protein i voda su OKVIRNE vrijednosti, nisu medicinski savjet.
+- Ne preporučuj ekstremne dijete ili ekstremno smanjenje hrane.
 
-5. Vježbe MORAŠ prilagoditi nivou:
-${experience}
+FORMAT ODGOVORA:
 
-6. Vježbe MORAŠ prilagoditi cilju:
-${goal}
-
-7. Nemoj koristiti iste vježbe na svakom treningu.
-Rasporedi različite mišićne grupe i napravi smislen sedmični raspored.
-
-8. Za svaki trening navedi 4 do 6 vježbi.
-Za svaku vježbu napiši:
-- naziv
-- serije x ponavljanja
-
-9. Za svaki dan napravi TAČNO ${meals} obroka.
-Obroci treba da budu različiti kroz sedmicu i praktični.
-
-10. Na kraju svakog dana navedi:
-Kalorije
-Protein
-Voda
-
-11. Plan ishrane treba biti uravnotežen. Ne preporučuj ekstremno smanjenje hrane niti ekstremno povećanje kalorija.
-
-12. Nemoj izmišljati opremu koju korisnik nema.
-
-13. Ne ponavljaj isti kompletan trening više puta.
-
-14. Ne piši uvod, objašnjenja ili napomene.
-
-15. Nakon NEDELJE odmah završi odgovor.
-
-KORISTI OVAJ FORMAT:
-
-PONEDJELJAK — TRENING
+PONEDJELJAK — TRENING ili ODMOR
 
 Vježbe:
-- Naziv — 3 x 10
-- Naziv — 3 x 12
-- Naziv — 3 x 10
-- Naziv — 3 x 15
+- Naziv vježbe — 3 x 10
+- Naziv vježbe — 3 x 12
+- Naziv vježbe — 3 x 10
+- Naziv vježbe — 3 x 15
 
 Obroci:
 - Doručak: ...
+- Obrok 2: ...
 - Ručak: ...
 - Večera: ...
 
@@ -96,28 +77,42 @@ Kalorije: ... kcal
 Protein: ... g
 Voda: ... L
 
-UTORKA — ODMOR
+UTORKA — TRENING ili ODMOR
 
-Obroci:
-- Doručak: ...
-- Ručak: ...
-- Večera: ...
+[isti format]
 
-Kalorije: ... kcal
-Protein: ... g
-Voda: ... L
+SRIJEDA — TRENING ili ODMOR
 
-[ISTI FORMAT ZA SRIJEDU, ČETVRTAK, PETAK, SUBOTU I NEDELJU]
+[isti format]
+
+ČETVRTAK — TRENING ili ODMOR
+
+[isti format]
+
+PETAK — TRENING ili ODMOR
+
+[isti format]
+
+SUBOTA — TRENING ili ODMOR
+
+[isti format]
+
+NEDELJA — TRENING ili ODMOR
+
+[isti format]
 
 CILJ: ${goal}
 KALORIJE: ... kcal
 PROTEIN: ... g
 VODA: ... L
 
-VAŽNO:
-Odgovor mora sadržati samo plan.
-Ne ponavljaj instrukcije.
-Ne dodaj tekst nakon završnog reda VODA.
+STROGO:
+- Samo plan.
+- Bez uvoda.
+- Bez objašnjenja.
+- Bez ponavljanja instrukcija.
+- Bez izmišljanja vježbi.
+- Bez teksta nakon VODA.
 `;
 
     const response = await fetch(
@@ -130,11 +125,12 @@ Ne dodaj tekst nakon završnog reda VODA.
         },
         body: JSON.stringify({
           model: "@cf/zai-org/glm-4.7-flash",
+
           messages: [
             {
               role: "system",
               content:
-                "You are GymGenie. Create concise, personalized 7-day fitness and meal plans. Follow the user's data exactly. Never repeat the same workout unnecessarily."
+                "You are GymGenie. Create accurate, concise and personalized fitness plans. Use only real exercise names. Never invent exercise names."
             },
             {
               role: "user",
@@ -147,7 +143,7 @@ Ne dodaj tekst nakon završnog reda VODA.
           },
 
           max_completion_tokens: 1800,
-          temperature: 0.4
+          temperature: 0.2
         })
       }
     );
