@@ -18,125 +18,106 @@ export default async function handler(req, res) {
     } = req.body || {};
 
     const prompt = `
-Napravi personalizovani sedmodnevni fitness plan.
+Ti si GymGenie AI personalni trener i nutricionista.
 
-PODACI:
+NAPRAVI PERSONALIZOVAN PLAN NA OSNOVU OVIH PODATAKA:
+
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
-Treninga sedmično: ${trainingDays}
+Broj treninga sedmično: ${trainingDays}
 Mjesto treninga: ${location}
-Obroka dnevno: ${meals}
+Broj obroka dnevno: ${meals}
 
-PRAVILA:
-- Mora biti TAČNO 7 dana: PONEDJELJAK, UTORAK, SRIJEDA, ČETVRTAK, PETAK, SUBOTA, NEDELJA.
-- Svaki dan mora biti označen kao TRENING ili ODMOR.
-- Ako je TRENING: navedi najviše 4 vježbe.
-- Za svaku vježbu navedi serije x ponavljanja.
-- Ako je ODMOR: napiši samo ODMOR i obroke.
-- Za svaki dan navedi obroke prema broju obroka korisnika.
-- Za svaki dan navedi okvirne kalorije, protein i vodu.
-- Na kraju navedi CILJ, KALORIJE, PROTEIN i VODU.
-- Bez uvoda.
-- Bez objašnjavanja vježbi.
-- Bez napomena.
-- Bez ponavljanja.
-- Ne ponavljaj instrukcije.
-- Nakon NEDELJE odmah završi odgovor.
-- Piši kratko, jasno i na srpskom/bosanskom jeziku.
+STROGA PRAVILA:
 
-FORMAT:
+1. Napravi TAČNO 7 dana, od PONEDJELJKA do NEDELJE.
 
-PONEDJELJAK — TRENING/ODMOR
+2. Broj dana sa treningom mora odgovarati korisnikovom izboru:
+${trainingDays} dana treninga sedmično.
+
+3. Ostatak dana moraju biti ODMOR ili AKTIVNI ODMOR.
+
+4. Vježbe MORAŠ prilagoditi mjestu treninga:
+- Teretana = sprave, šipke, bučice i kablovi.
+- Kuća - bez opreme = samo vježbe sa sopstvenom težinom.
+- Kuća - osnovna oprema = koristi bučice, elastične trake i osnovnu opremu.
+
+5. Vježbe MORAŠ prilagoditi nivou:
+${experience}
+
+6. Vježbe MORAŠ prilagoditi cilju:
+${goal}
+
+7. Nemoj koristiti iste vježbe na svakom treningu.
+Rasporedi različite mišićne grupe i napravi smislen sedmični raspored.
+
+8. Za svaki trening navedi 4 do 6 vježbi.
+Za svaku vježbu napiši:
+- naziv
+- serije x ponavljanja
+
+9. Za svaki dan napravi TAČNO ${meals} obroka.
+Obroci treba da budu različiti kroz sedmicu i praktični.
+
+10. Na kraju svakog dana navedi:
+Kalorije
+Protein
+Voda
+
+11. Plan ishrane treba biti uravnotežen. Ne preporučuj ekstremno smanjenje hrane niti ekstremno povećanje kalorija.
+
+12. Nemoj izmišljati opremu koju korisnik nema.
+
+13. Ne ponavljaj isti kompletan trening više puta.
+
+14. Ne piši uvod, objašnjenja ili napomene.
+
+15. Nakon NEDELJE odmah završi odgovor.
+
+KORISTI OVAJ FORMAT:
+
+PONEDJELJAK — TRENING
+
 Vježbe:
-- vježba — serije x ponavljanja
+- Naziv — 3 x 10
+- Naziv — 3 x 12
+- Naziv — 3 x 10
+- Naziv — 3 x 15
 
 Obroci:
-- obrok
-- obrok
+- Doručak: ...
+- Ručak: ...
+- Večera: ...
 
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
+Kalorije: ... kcal
+Protein: ... g
+Voda: ... L
 
-UTORKA — TRENING/ODMOR
-Vježbe:
-- vježba — serije x ponavljanja
-
-Obroci:
-- obrok
-- obrok
-
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
-
-SRIJEDA — TRENING/ODMOR
-Vježbe:
-- vježba — serije x ponavljanja
+UTORKA — ODMOR
 
 Obroci:
-- obrok
-- obrok
+- Doručak: ...
+- Ručak: ...
+- Večera: ...
 
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
+Kalorije: ... kcal
+Protein: ... g
+Voda: ... L
 
-ČETVRTAK — TRENING/ODMOR
-Vježbe:
-- vježba — serije x ponavljanja
+[ISTI FORMAT ZA SRIJEDU, ČETVRTAK, PETAK, SUBOTU I NEDELJU]
 
-Obroci:
-- obrok
-- obrok
+CILJ: ${goal}
+KALORIJE: ... kcal
+PROTEIN: ... g
+VODA: ... L
 
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
-
-PETAK — TRENING/ODMOR
-Vježbe:
-- vježba — serije x ponavljanja
-
-Obroci:
-- obrok
-- obrok
-
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
-
-SUBOTA — TRENING/ODMOR
-Vježbe:
-- vježba — serije x ponavljanja
-
-Obroci:
-- obrok
-- obrok
-
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
-
-NEDELJA — TRENING/ODMOR
-Vježbe:
-- vježba — serije x ponavljanja
-
-Obroci:
-- obrok
-- obrok
-
-Kalorije: ___ kcal
-Protein: ___ g
-Voda: ___ L
-
-CILJ: ___
-KALORIJE: ___ kcal
-PROTEIN: ___ g
-VODA: ___ L
+VAŽNO:
+Odgovor mora sadržati samo plan.
+Ne ponavljaj instrukcije.
+Ne dodaj tekst nakon završnog reda VODA.
 `;
 
     const response = await fetch(
@@ -153,7 +134,7 @@ VODA: ___ L
             {
               role: "system",
               content:
-                "You are GymGenie. Return only the requested 7-day fitness plan. Do not repeat instructions. Do not add text after Sunday."
+                "You are GymGenie. Create concise, personalized 7-day fitness and meal plans. Follow the user's data exactly. Never repeat the same workout unnecessarily."
             },
             {
               role: "user",
@@ -165,8 +146,8 @@ VODA: ___ L
             enable_thinking: false
           },
 
-          max_completion_tokens: 1600,
-          temperature: 0.2
+          max_completion_tokens: 1800,
+          temperature: 0.4
         })
       }
     );
