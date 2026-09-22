@@ -1,4 +1,5 @@
 export const maxDuration = 60;
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -68,16 +69,6 @@ export default async function handler(req, res) {
     const protein = Math.round(w * 1.6);
     const water = Math.round(w * 0.035 * 10) / 10;
 
-    const days = [
-      "PONEDJELJAK",
-      "UTORAK",
-      "SRIJEDA",
-      "ČETVRTAK",
-      "PETAK",
-      "SUBOTA",
-      "NEDELJA"
-    ];
-
     const schedules = {
       1: ["PONEDJELJAK"],
       2: ["PONEDJELJAK", "ČETVRTAK"],
@@ -128,7 +119,7 @@ Sklekovi, uski sklekovi, široki sklekovi, čučanj,
 goblet čučanj, iskorak, bugarski čučanj,
 rumunsko mrtvo dizanje sa bučicama,
 veslanje sa bučicom, potisak bučicama iznad glave,
-biceps pregib sa bučicama, triceps opružanje,
+biceps pregib sa bučicama, triceps opružanje sa bučicom,
 glute bridge, podizanje na prste, plank,
 bočni plank, dead bug, bird dog, mountain climbers.
 `;
@@ -146,14 +137,15 @@ plank, cable crunch, hanging knee raise.
     }
 
     const systemPrompt = `
-Ti si GymGenie AI trener.
+TI SI GYMGENIE AI TRENER.
 
-Vrati ISKLJUČIVO validan JSON.
-Bez markdowna.
-Bez ```json.
-Bez teksta prije ili poslije JSON-a.
+VRATI ISKLJUČIVO VALIDAN JSON.
+NE PIŠI MARKDOWN.
+NE PIŠI ```json.
+NE PIŠI OBJAŠNJENJE.
+NE PIŠI TEKST IZVAN JSON-A.
 
-FORMAT:
+STRUKTURA:
 
 {
   "days": [
@@ -181,29 +173,33 @@ FORMAT:
   ]
 }
 
-OBAVEZNA PRAVILA:
+OBAVEZNO:
 
 - Tačno 7 dana.
-- Redoslijed dana mora biti:
-PONEDJELJAK, UTORAK, SRIJEDA, ČETVRTAK, PETAK, SUBOTA, NEDELJA.
-- Tačno ${d} dana imaju "type": "TRENING".
-- Svi ostali imaju "type": "ODMOR".
+- Redoslijed:
+PONEDJELJAK
+UTORAK
+SRIJEDA
+ČETVRTAK
+PETAK
+SUBOTA
+NEDELJA
+
+- Tačno ${d} dana moraju biti TRENING.
+- Svi ostali dani moraju biti ODMOR.
 - ODMOR mora imati exercises: [].
-- TRENING mora imati 4 vježbe.
+- TRENING mora imati tačno 4 vježbe.
 - Svaki dan mora imati tačno ${m} obroka.
-- Nikada nemoj dodati ${m + 1}. obrok.
-- Nikada nemoj izostaviti obrok.
-- Svaki obrok ima samo name i description.
-- Svaka vježba ima samo name, sets, reps i rest.
-- calories, protein i water su brojevi.
+- Svaki obrok mora imati name i description.
+- Svaka vježba mora imati name, sets, reps i rest.
+- calories, protein i water moraju biti brojevi.
 - Ne dodaj dodatna polja.
-- Koristi samo dozvoljene vježbe.
 - Ne mijenjaj broj trening dana.
 - Ne mijenjaj broj obroka.
-- NEDELJA mora uvijek postojati.
-- Na dan odmora i dalje mora biti ${m} obroka.
+- NEDELJA mora postojati.
+- Koristi samo dozvoljene vježbe.
 
-Budi kratak u opisima obroka kako bi cijeli JSON ostao mali.
+Kratki opisi obroka. Bez nepotrebnog teksta.
 `;
 
     const userPrompt = `
@@ -220,6 +216,8 @@ Obroka dnevno: ${m}
 
 DANI TRENINGA:
 ${trainingSchedule.join(", ")}
+
+OSTALI DANI SU ODMOR.
 
 CILJNE VRIJEDNOSTI:
 Kalorije: ${calories}
@@ -288,14 +286,13 @@ VRATI SAMO JSON.
 
     const responseText = await response.text();
 
-    let cloudflareData;
+    let data;
 
     try {
-      cloudflareData = JSON.parse(responseText);
+      data = JSON.parse(responseText);
     } catch {
       return res.status(502).json({
-        error:
-          "Cloudflare je vratio neispravan odgovor.",
+        error: "Cloudflare je vratio neispravan odgovor.",
         details: responseText.slice(0, 500)
       });
     }
@@ -303,14 +300,13 @@ VRATI SAMO JSON.
     if (!response.ok) {
       return res.status(502).json({
         error:
-          cloudflareData?.error?.message ||
-          cloudflareData?.errors?.[0]?.message ||
+          data?.error?.message ||
+          data?.errors?.[0]?.message ||
           "Cloudflare AI greška."
       });
     }
 
-    let content =
-      cloudflareData?.choices?.[0]?.message?.content;
+    let content = data?.choices?.[0]?.message?.content;
 
     if (Array.isArray(content)) {
       content = content
@@ -377,6 +373,8 @@ VRATI SAMO JSON.
       "NEDELJA"
     ];
 
+    let trainingCount = 0;
+
     for (let i = 0; i < 7; i++) {
       const day = plan.days[i];
 
@@ -386,46 +384,74 @@ VRATI SAMO JSON.
         });
       }
 
-      const shouldTrain =
-        trainingSchedule.includes(day.day);
+      const shouldTrain = trainingSchedule.includes(day.day);
 
       if (
         (shouldTrain && day.type !== "TRENING") ||
         (!shouldTrain && day.type !== "ODMOR")
       ) {
         return res.status(502).json({
-          error: `AI je pogrešno postavio trening za ${day.day}.`
+          error: `${day.day}: pogrešan tip dana.`
         });
       }
 
-      if (!Array.isArray(day.meals) || day.meals.length !== m) {
-        return res.status(502).json({
-          error: `${day.day} mora imati tačno ${m} obroka.`
-        });
-      }
+      if (day.type === "TRENING") {
+        trainingCount++;
 
-      if (!Array.isArray(day.exercises)) {
-        return res.status(502).json({
-          error: `${day.day}: exercises nije lista.`
-        });
+        if (
+          !Array.isArray(day.exercises) ||
+          day.exercises.length !== 4
+        ) {
+          return res.status(502).json({
+            error: `${day.day}: mora imati tačno 4 vježbe.`
+          });
+        }
+
+        for (const exercise of day.exercises) {
+          if (
+            !exercise ||
+            typeof exercise !== "object" ||
+            typeof exercise.name !== "string" ||
+            typeof exercise.sets !== "number" ||
+            typeof exercise.reps !== "string" ||
+            typeof exercise.rest !== "string"
+          ) {
+            return res.status(502).json({
+              error: `${day.day}: neispravna vježba.`
+            });
+          }
+        }
+      } else {
+        if (
+          !Array.isArray(day.exercises) ||
+          day.exercises.length !== 0
+        ) {
+          return res.status(502).json({
+            error: `${day.day}: dan odmora ne smije imati vježbe.`
+          });
+        }
       }
 
       if (
-        day.type === "TRENING" &&
-        day.exercises.length !== 4
+        !Array.isArray(day.meals) ||
+        day.meals.length !== m
       ) {
         return res.status(502).json({
-          error: `${day.day} mora imati 4 vježbe.`
+          error: `${day.day}: mora imati tačno ${m} obroka.`
         });
       }
 
-      if (
-        day.type === "ODMOR" &&
-        day.exercises.length !== 0
-      ) {
-        return res.status(502).json({
-          error: `${day.day} ne smije imati vježbe.`
-        });
+      for (const meal of day.meals) {
+        if (
+          !meal ||
+          typeof meal !== "object" ||
+          typeof meal.name !== "string" ||
+          typeof meal.description !== "string"
+        ) {
+          return res.status(502).json({
+            error: `${day.day}: neispravan obrok.`
+          });
+        }
       }
 
       if (
@@ -437,6 +463,12 @@ VRATI SAMO JSON.
           error: `${day.day}: neispravne nutritivne vrijednosti.`
         });
       }
+    }
+
+    if (trainingCount !== d) {
+      return res.status(502).json({
+        error: `AI je napravio ${trainingCount} treninga umjesto ${d}.`
+      });
     }
 
     return res.status(200).json({
