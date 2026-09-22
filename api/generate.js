@@ -59,12 +59,28 @@ export default async function handler(req, res) {
     const protein = Math.round(w * 1.6);
     const water = Math.round(w * 0.035 * 10) / 10;
 
+    const allDays = [
+      "PONEDJELJAK",
+      "UTORAK",
+      "SRIJEDA",
+      "ČETVRTAK",
+      "PETAK",
+      "SUBOTA",
+      "NEDELJA"
+    ];
+
     const schedules = {
       1: ["PONEDJELJAK"],
       2: ["PONEDJELJAK", "ČETVRTAK"],
       3: ["PONEDJELJAK", "SRIJEDA", "PETAK"],
       4: ["PONEDJELJAK", "UTORAK", "ČETVRTAK", "SUBOTA"],
-      5: ["PONEDJELJAK", "UTORAK", "ČETVRTAK", "PETAK", "SUBOTA"],
+      5: [
+        "PONEDJELJAK",
+        "UTORAK",
+        "ČETVRTAK",
+        "PETAK",
+        "SUBOTA"
+      ],
       6: [
         "PONEDJELJAK",
         "UTORAK",
@@ -170,12 +186,103 @@ Hanging knee raise
 `;
     }
 
-    const basePrompt = `
+    const systemPrompt = `
 TI SI GYMGENIE AI TRENER.
 
-NAPRAVI TAČNO 7 DANA.
+MORAŠ VRATITI ISKLJUČIVO VALIDAN JSON.
 
-PODACI:
+NE PIŠI MARKDOWN.
+NE PIŠI ```json.
+NE PIŠI UVOD.
+NE PIŠI OBJAŠNJENJE.
+NE PIŠI TEKST IZVAN JSON-A.
+
+JSON MORA IMATI OVU STRUKTURU:
+
+{
+  "days": [
+    {
+      "day": "PONEDJELJAK",
+      "type": "TRENING",
+      "exercises": [
+        {
+          "name": "Sklekovi",
+          "sets": 3,
+          "reps": "10",
+          "rest": "60 sekundi"
+        }
+      ],
+      "meals": [
+        {
+          "name": "Doručak",
+          "description": "Jaja, hljeb i jogurt"
+        }
+      ],
+      "calories": 2000,
+      "protein": 130,
+      "water": 2.5
+    }
+  ]
+}
+
+PRAVILA KOJA NE SMIJEŠ PREKRŠITI:
+
+1. "days" MORA imati TAČNO 7 elemenata.
+
+2. Dani MORAJU biti tačno ovim redom:
+PONEDJELJAK
+UTORAK
+SRIJEDA
+ČETVRTAK
+PETAK
+SUBOTA
+NEDELJA
+
+3. "type" može biti samo:
+"TRENING"
+ili
+"ODMOR"
+
+4. TAČNO ${d} dana mora imati type "TRENING".
+
+5. SVI OSTALI dani moraju imati type "ODMOR".
+
+6. Na dan ODMOR "exercises" mora biti prazna lista [].
+
+7. Na dan TRENING mora biti 4 ili 5 vježbi.
+
+8. SVAKI dan MORA imati TAČNO ${m} elemenata u "meals".
+
+9. Ne dodaj nijedan dodatni obrok.
+
+10. Ne izostavljaj nijedan obrok.
+
+11. "meals" mora biti niz objekata sa:
+"name"
+"description"
+
+12. "calories", "protein" i "water" moraju biti brojevi.
+
+13. Ne dodaj dodatna polja.
+
+14. Koristi samo dozvoljene vježbe.
+
+15. Ako je dan odmora, i dalje mora imati svih ${m} obroka.
+
+16. Ne mijenjaj broj trening dana.
+
+17. Ne mijenjaj broj obroka.
+
+18. Ne izostavljaj NEDELJU.
+
+19. Ne dodaj osmi dan.
+
+20. Vraćaj samo JSON.
+`;
+
+    const userPrompt = `
+NAPRAVI PLAN PREMA OVIM PODACIMA:
+
 Visina: ${h} cm
 Težina: ${w} kg
 Godine: ${a}
@@ -185,376 +292,164 @@ Treninga sedmično: ${d}
 Mjesto treninga: ${location}
 Obroka dnevno: ${m}
 
-==================================================
-NAJVAŽNIJE PRAVILO
-==================================================
+TAČNI DANI TRENINGA:
+${trainingSchedule.join(", ")}
 
-MORAŠ prikazati SVIH 7 dana.
+SVI OSTALI DANI SU ODMOR.
 
-DANI MORAJU BITI TAČNO:
-
-PONEDJELJAK
-UTORAK
-SRIJEDA
-ČETVRTAK
-PETAK
-SUBOTA
-NEDELJA
-
-NE SMIJEŠ izostaviti nijedan dan.
-
-==================================================
-TRENING
-==================================================
-
-TAČNO ${d} dana moraju biti označena kao:
-
-DAN — TRENING
-
-Svi ostali dani moraju biti:
-
-DAN — ODMOR
-
-TAČNI DANI ZA TRENING:
-
-${trainingSchedule.map(day => "- " + day).join("\n")}
-
-Ne dodaj trening na bilo koji drugi dan.
-
-Na svakom trening danu koristi 4 do 5 vježbi.
+CILJNE VRIJEDNOSTI:
+Kalorije: ${calories}
+Protein: ${protein} g
+Voda: ${water} L
 
 ${exerciseRules}
 
-==================================================
-OBROCI
-==================================================
-
-SVAKI od svih 7 dana mora imati TAČNO ${m} obroka.
-
-Ako je ${m} obroka, koristi:
-
-- Doručak: ...
-- Obrok 2: ...
-${m >= 3 ? "- Obrok 3: ...\n" : ""}${m >= 4 ? "- Obrok 4: ...\n" : ""}${m >= 5 ? "- Obrok 5: ...\n" : ""}${m >= 6 ? "- Obrok 6: ...\n" : ""}
-
-NEMA dodatnih obroka.
-
-NEMA manje obroka.
-
-==================================================
-VRIJEDNOSTI
-==================================================
-
-Kalorije: ${calories} kcal
-Protein: ${protein} g
-Voda: ${water} L
-
-==================================================
-FORMAT
-==================================================
-
-PONEDJELJAK — TRENING
-
-Vježbe:
-- Sklekovi — 3 x 10
-- Čučanj — 3 x 12
-- Glute bridge — 3 x 15
-- Plank — 3 x 45 sekundi
-
-Obroci:
-- Doručak: ...
-- Obrok 2: ...
-${m >= 3 ? "- Obrok 3: ...\n" : ""}${m >= 4 ? "- Obrok 4: ...\n" : ""}${m >= 5 ? "- Obrok 5: ...\n" : ""}${m >= 6 ? "- Obrok 6: ...\n" : ""}
-Kalorije: ${calories} kcal
-Protein: ${protein} g
-Voda: ${water} L
-
-UTORAK — ODMOR
-
-Obroci:
-- Doručak: ...
-- Obrok 2: ...
-${m >= 3 ? "- Obrok 3: ...\n" : ""}${m >= 4 ? "- Obrok 4: ...\n" : ""}${m >= 5 ? "- Obrok 5: ...\n" : ""}${m >= 6 ? "- Obrok 6: ...\n" : ""}
-Kalorije: ${calories} kcal
-Protein: ${protein} g
-Voda: ${water} L
-
-NASTAVI ISTIM FORMATOM ZA SVIH 7 DANA.
-
-NAKON NEDELJE ZAVRŠI.
-
-NE PIŠI UVOD.
-NE PIŠI OBJAŠNJENJA.
-NE PIŠI INSTRUKCIJE.
+VRATI TAČNO 7 DANA U JSON FORMATU.
 `;
 
-    /*
-      NORMALIZACIJA TEKSTA
-      Omogućava validatoru da prihvati
-      mala odstupanja u pisanju.
-    */
+    function cleanJson(text) {
+      let result = String(text || "").trim();
 
-    function normalize(text) {
-      return String(text)
-        .toUpperCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/Đ/g, "D")
-        .replace(/\r/g, "")
-        .replace(/[–—−]/g, "-")
-        .replace(/\s+/g, " ")
+      result = result
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/i, "")
         .trim();
-    }
 
-    const dayAliases = {
-      PONEDJELJAK: ["PONEDJELJAK"],
-      UTORAK: ["UTORAK"],
-      SRIJEDA: ["SRIJEDA"],
-      CETVRTAK: ["CETVRTAK", "ČETVRTAK"],
-      PETAK: ["PETAK"],
-      SUBOTA: ["SUBOTA"],
-      NEDELJA: ["NEDELJA", "NEDJELJA"]
-    };
+      const firstBrace = result.indexOf("{");
+      const lastBrace = result.lastIndexOf("}");
 
-    function hasDay(text, day) {
-      const normalized = normalize(text);
-
-      return dayAliases[day].some(alias =>
-        normalized.includes(
-          normalize(alias)
-        )
-      );
-    }
-
-    function countTrainingDays(text) {
-      const normalized = normalize(text);
-
-      let count = 0;
-
-      for (const day of Object.keys(dayAliases)) {
-        const aliases = dayAliases[day];
-
-        for (const alias of aliases) {
-          const pattern =
-            new RegExp(
-              normalize(alias) +
-              "\\s*-\\s*TRENING\\b",
-              "i"
-            );
-
-          if (pattern.test(normalized)) {
-            count++;
-            break;
-          }
-        }
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        result = result.slice(firstBrace, lastBrace + 1);
       }
 
-      return count;
+      return result;
     }
 
-    function countRestDays(text) {
-      const normalized = normalize(text);
-
-      let count = 0;
-
-      for (const day of Object.keys(dayAliases)) {
-        const aliases = dayAliases[day];
-
-        for (const alias of aliases) {
-          const pattern =
-            new RegExp(
-              normalize(alias) +
-              "\\s*-\\s*ODMOR\\b",
-              "i"
-            );
-
-          if (pattern.test(normalized)) {
-            count++;
-            break;
-          }
-        }
+    function validatePlan(data) {
+      if (!data || typeof data !== "object") {
+        return "Odgovor nije JSON objekat.";
       }
 
-      return count;
-    }
-
-    function countMealsForDay(block) {
-      const normalized = normalize(block);
-
-      let count = 0;
-
-      if (
-        /(^|[^A-Z])DORUCAK\s*:/i.test(
-          normalized
-        )
-      ) {
-        count++;
+      if (!Array.isArray(data.days)) {
+        return "Nedostaje days lista.";
       }
 
-      for (let i = 2; i <= 6; i++) {
-        const regex = new RegExp(
-          `(^|[^A-Z])OBROK\\s*${i}\\s*:`,
-          "i"
-        );
-
-        if (regex.test(normalized)) {
-          count++;
-        }
+      if (data.days.length !== 7) {
+        return `Plan ima ${data.days.length}/7 dana.`;
       }
 
-      return count;
-    }
-
-    function validatePlan(plan) {
-      const normalized = normalize(plan);
-
-      const requiredDays = [
+      const expectedDays = [
         "PONEDJELJAK",
         "UTORAK",
         "SRIJEDA",
-        "CETVRTAK",
+        "ČETVRTAK",
         "PETAK",
         "SUBOTA",
         "NEDELJA"
       ];
 
-      /*
-        Svih 7 dana mora postojati.
-      */
+      const expectedTraining = new Set(trainingSchedule);
 
-      for (const day of requiredDays) {
-        if (!hasDay(plan, day)) {
-          return {
-            valid: false,
-            reason:
-              `Nedostaje dan: ${day}`
-          };
-        }
-      }
-
-      /*
-        Tačan broj treninga.
-      */
-
-      const trainingCount =
-        countTrainingDays(plan);
-
-      if (trainingCount !== d) {
-        return {
-          valid: false,
-          reason:
-            `Broj treninga: ${trainingCount}/${d}`
-        };
-      }
-
-      /*
-        Tačan broj odmora.
-      */
-
-      const restCount =
-        countRestDays(plan);
-
-      if (restCount !== 7 - d) {
-        return {
-          valid: false,
-          reason:
-            `Broj dana odmora: ${restCount}/${7 - d}`
-        };
-      }
-
-      /*
-        Pronađi početak svakog dana.
-      */
-
-      const dayPattern =
-        /(PONEDJELJAK|UTORAK|SRIJEDA|CETVRTAK|PETAK|SUBOTA|NEDELJA)\s*-/g;
-
-      const positions = [];
-
-      let match;
-
-      while (
-        (match =
-          dayPattern.exec(normalized)) !== null
-      ) {
-        positions.push(match.index);
-      }
-
-      /*
-        Mora postojati tačno 7 početaka dana.
-      */
-
-      if (positions.length !== 7) {
-        return {
-          valid: false,
-          reason:
-            `Pronađeno ${positions.length}/7 dana`
-        };
-      }
-
-      /*
-        Provjera obroka za svaki dan.
-      */
+      let trainingCount = 0;
 
       for (let i = 0; i < 7; i++) {
-        const start =
-          positions[i];
+        const day = data.days[i];
 
-        const end =
-          i < 6
-            ? positions[i + 1]
-            : normalized.length;
+        if (!day || typeof day !== "object") {
+          return `Dan ${i + 1} nije validan objekat.`;
+        }
 
-        const block =
-          normalized.slice(
-            start,
-            end
-          );
+        if (day.day !== expectedDays[i]) {
+          return `Pogrešan dan na poziciji ${i + 1}.`;
+        }
 
-        const mealCount =
-          countMealsForDay(block);
+        if (day.type !== "TRENING" && day.type !== "ODMOR") {
+          return `${day.day}: neispravan type.`;
+        }
 
-        if (mealCount !== m) {
-          return {
-            valid: false,
-            reason:
-              `Dan ${i + 1}: ${mealCount}/${m} obroka`
-          };
+        const shouldTrain = expectedTraining.has(day.day);
+
+        if (shouldTrain && day.type !== "TRENING") {
+          return `${day.day} mora biti TRENING.`;
+        }
+
+        if (!shouldTrain && day.type !== "ODMOR") {
+          return `${day.day} mora biti ODMOR.`;
+        }
+
+        if (day.type === "TRENING") {
+          trainingCount++;
+
+          if (!Array.isArray(day.exercises)) {
+            return `${day.day}: nedostaje exercises.`;
+          }
+
+          if (
+            day.exercises.length < 4 ||
+            day.exercises.length > 5
+          ) {
+            return `${day.day}: mora imati 4-5 vježbi.`;
+          }
+
+          for (const exercise of day.exercises) {
+            if (
+              !exercise ||
+              typeof exercise !== "object" ||
+              typeof exercise.name !== "string" ||
+              typeof exercise.sets !== "number" ||
+              typeof exercise.reps !== "string" ||
+              typeof exercise.rest !== "string"
+            ) {
+              return `${day.day}: neispravna vježba.`;
+            }
+          }
+        } else {
+          if (!Array.isArray(day.exercises)) {
+            return `${day.day}: exercises mora biti [].`;
+          }
+
+          if (day.exercises.length !== 0) {
+            return `${day.day}: dan odmora ne smije imati vježbe.`;
+          }
+        }
+
+        if (!Array.isArray(day.meals)) {
+          return `${day.day}: nedostaje meals.`;
+        }
+
+        if (day.meals.length !== m) {
+          return `${day.day}: ima ${day.meals.length}/${m} obroka.`;
+        }
+
+        for (const meal of day.meals) {
+          if (
+            !meal ||
+            typeof meal !== "object" ||
+            typeof meal.name !== "string" ||
+            typeof meal.description !== "string"
+          ) {
+            return `${day.day}: neispravan obrok.`;
+          }
+        }
+
+        if (
+          typeof day.calories !== "number" ||
+          typeof day.protein !== "number" ||
+          typeof day.water !== "number"
+        ) {
+          return `${day.day}: nutritivne vrijednosti nisu validne.`;
         }
       }
 
-      return {
-        valid: true
-      };
+      if (trainingCount !== d) {
+        return `Broj treninga ${trainingCount}/${d}.`;
+      }
+
+      return null;
     }
 
-    /*
-      AI može pokušati do 3 puta.
-    */
-
-    let lastReason =
-      "AI nije napravio ispravan plan.";
-
-    for (let attempt = 1; attempt <= 3; attempt++) {
-
-      const retryInstruction =
-        attempt === 1
-          ? ""
-          : `
-
-PRETHODNI POKUŠAJ NIJE BIO ISPRAVAN.
-
-OVAJ PUT OBAVEZNO:
-- prikaži svih 7 dana
-- tačno ${d} trening dana
-- tačno ${7 - d} dana odmora
-- tačno ${m} obroka SVAKOG dana
-- ne izostavljaj NEDELJU
-- ne dodaj dodatne dane
-
-Pokušaj broj ${attempt}.
-`;
-
+    async function askAI() {
       const response = await fetch(
         "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/v1/chat/completions",
         {
@@ -562,29 +457,21 @@ Pokušaj broj ${attempt}.
 
           headers: {
             "Authorization":
-              "Bearer " +
-              process.env.CLOUDFLARE_API_TOKEN,
-
-            "Content-Type":
-              "application/json"
+              "Bearer " + process.env.CLOUDFLARE_API_TOKEN,
+            "Content-Type": "application/json"
           },
 
           body: JSON.stringify({
-            model:
-              "@cf/zai-org/glm-4.7-flash",
+            model: "@cf/zai-org/glm-4.7-flash",
 
             messages: [
               {
                 role: "system",
-                content:
-                  "You are GymGenie. You MUST output all 7 days. You MUST follow the exact number of training days and meals. Never omit a day. Never add a day."
+                content: systemPrompt
               },
-
               {
                 role: "user",
-                content:
-                  basePrompt +
-                  retryInstruction
+                content: userPrompt
               }
             ],
 
@@ -592,109 +479,98 @@ Pokušaj broj ${attempt}.
               enable_thinking: false
             },
 
-            max_completion_tokens: 3000,
+            max_completion_tokens: 5000,
 
             temperature: 0.1
           })
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        console.error(
-          "Cloudflare error:",
-          data
+        throw new Error(
+          data?.error?.message ||
+          data?.errors?.[0]?.message ||
+          "Cloudflare AI greška."
         );
-
-        return res.status(502).json({
-          error:
-            data?.error?.message ||
-            data?.errors?.[0]?.message ||
-            "Cloudflare AI greška."
-        });
       }
 
-      const content =
+      let content =
         data?.choices?.[0]?.message?.content;
 
-      let plan = "";
-
-      if (typeof content === "string") {
-        plan = content;
-      } else if (Array.isArray(content)) {
-        plan = content
-          .filter(
-            item =>
-              item?.type === "text" ||
-              typeof item === "string"
-          )
+      if (Array.isArray(content)) {
+        content = content
           .map(item =>
             typeof item === "string"
               ? item
-              : item.text || ""
+              : item?.text || ""
           )
           .join("");
       }
 
-      if (!plan.trim()) {
-        lastReason =
-          "AI nije vratio plan.";
-        continue;
-      }
+      return cleanJson(content);
+    }
 
-      const validation =
-        validatePlan(plan);
+    let lastError = "";
 
-      if (validation.valid) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const raw = await askAI();
+
+        let parsed;
+
+        try {
+          parsed = JSON.parse(raw);
+        } catch (jsonError) {
+          lastError = "AI nije vratio validan JSON.";
+          continue;
+        }
+
+        const validationError =
+          validatePlan(parsed);
+
+        if (validationError) {
+          lastError = validationError;
+          continue;
+        }
+
         return res.status(200).json({
-          plan,
+          plan: JSON.stringify(parsed),
 
           stats: {
-            bmi:
-              Number(
-                bmi.toFixed(1)
-              ),
-
+            bmi: Number(bmi.toFixed(1)),
             calories,
             protein,
             water
           }
         });
+
+      } catch (error) {
+        console.error(
+          `AI pokušaj ${attempt}:`,
+          error
+        );
+
+        lastError =
+          error?.message ||
+          "AI greška.";
       }
-
-      console.error(
-        `AI pokušaj ${attempt} odbijen:`,
-        validation.reason
-      );
-
-      lastReason =
-        validation.reason;
     }
-
-    /*
-      Ako sva 3 pokušaja ne prođu,
-      vrati jasnu grešku.
-    */
 
     return res.status(502).json({
       error:
-        "AI nije uspio napraviti ispravan plan nakon 3 pokušaja. Pokušaj ponovo."
+        "AI nije napravio validan plan. " +
+        lastError
     });
 
   } catch (error) {
-
-    console.error(
-      "Server error:",
-      error
-    );
+    console.error("Server error:", error);
 
     return res.status(500).json({
       error:
         "Greška servera: " +
-        (error?.message ||
-          "Nepoznata greška.")
+        (error?.message || "Nepoznata greška.")
     });
   }
 }
