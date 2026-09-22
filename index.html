@@ -1,390 +1,124 @@
-<!DOCTYPE html>
-<html lang="sr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GymGenie</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background: #0b0f14;
-      color: white;
-      min-height: 100vh;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 900px;
-      margin: auto;
-      padding: 30px 20px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 35px;
-    }
-
-    header h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    header p {
-      color: #aeb6c2;
-      font-size: 17px;
-    }
-
-    .card {
-      background: #151b23;
-      border: 1px solid #252e3a;
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 25px;
-    }
-
-    .card h2 {
-      margin-bottom: 20px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      color: #cbd3dd;
-      font-size: 14px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 13px;
-      border-radius: 10px;
-      border: 1px solid #35404e;
-      background: #0d131a;
-      color: white;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #7c5cff;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      background: #7c5cff;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    #result {
-      display: none;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 25px;
-    }
-
-    .stat {
-      background: #0d131a;
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 21px;
-      margin-top: 5px;
-    }
-
-    .day {
-      border: 1px solid #2a3542;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 15px;
-      background: #10161e;
-    }
-
-    .day h3 {
-      margin-bottom: 12px;
-      font-size: 21px;
-    }
-
-    .day p {
-      color: #c5ccd5;
-      line-height: 1.6;
-      margin: 5px 0;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 7px;
-      background: #25203d;
-      color: #bcaeff;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 650px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      header h1 {
-        font-size: 34px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-
-  <header>
-    <h1>GymGenie 🧞</h1>
-    <p>AI fitness & nutrition planner</p>
-  </header>
-
-  <div class="card">
-    <h2>Napravi svoj plan</h2>
-
-    <div class="form-grid">
-
-      <div>
-        <label>Visina (cm)</label>
-        <input id="height" type="number" placeholder="npr. 180">
-      </div>
-
-      <div>
-        <label>Težina (kg)</label>
-        <input id="weight" type="number" placeholder="npr. 80">
-      </div>
-
-      <div>
-        <label>Godine</label>
-        <input id="age" type="number" placeholder="npr. 25">
-      </div>
-
-      <div>
-        <label>Iskustvo</label>
-        <select id="experience">
-          <option>Početnik</option>
-          <option>Srednji nivo</option>
-          <option>Napredni</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Cilj</label>
-        <select id="goal">
-          <option>Dobijanje mišića</option>
-          <option>Mršavljenje</option>
-          <option>Održavanje težine</option>
-          <option>Kondicija</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Treninga sedmično</label>
-        <select id="days">
-          <option>2</option>
-          <option>3</option>
-          <option selected>4</option>
-          <option>5</option>
-          <option>6</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Mjesto treninga</label>
-        <select id="location">
-          <option>Teretana</option>
-          <option>Kuća</option>
-          <option>Bez opreme</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Obroka dnevno</label>
-        <select id="meals">
-          <option>3</option>
-          <option selected>4</option>
-          <option>5</option>
-          <option>6</option>
-        </select>
-      </div>
-
-    </div>
-
-    <button onclick="generatePlan()">GENERIRAJ MOJ PLAN</button>
-  </div>
-
-  <div id="result">
-
-    <div class="card">
-      <h2>Tvoj plan</h2>
-
-      <div class="stats">
-        <div class="stat">
-          BMI
-          <strong id="bmi">-</strong>
-        </div>
-
-        <div class="stat">
-          Kalorije
-          <strong id="calories">-</strong>
-        </div>
-
-        <div class="stat">
-          Proteini
-          <strong id="protein">-</strong>
-        </div>
-
-        <div class="stat">
-          Voda
-          <strong id="water">-</strong>
-        </div>
-      </div>
-
-      <div id="weeklyPlan"></div>
-
-    </div>
-
-  </div>
-
-</div>
-
-<script>
-async function generatePlan() {
-  const height = Number(document.getElementById("height").value);
-  const weight = Number(document.getElementById("weight").value);
-  const age = Number(document.getElementById("age").value);
-  const experience = document.getElementById("experience").value;
-  const goal = document.getElementById("goal").value;
-  const trainingDays = Number(document.getElementById("days").value);
-  const location = document.getElementById("location").value;
-  const meals = Number(document.getElementById("meals").value);
-
-  if (!height || !weight || !age) {
-    alert("Unesi visinu, težinu i godine.");
-    return;
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
-  const button = document.querySelector("button");
-  button.disabled = true;
-  button.textContent = "AI PRAVI TVOJ PLAN...";
-
   try {
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        height,
-        weight,
-        age,
-        experience,
-        goal,
-        trainingDays,
-        location,
-        meals
-      })
-    });
+    const {
+      height,
+      weight,
+      age,
+      experience,
+      goal,
+      trainingDays,
+      location,
+      meals
+    } = req.body;
+
+    if (!height || !weight || !age) {
+      return res.status(400).json({
+        error: "Nedostaju visina, težina ili godine."
+      });
+    }
+
+    const prompt = `
+Ti si GymGenie, personalni AI fitness i nutrition trener.
+
+Napravi potpuno personalizovan plan za korisnika.
+
+PODACI KORISNIKA:
+Visina: ${height} cm
+Težina: ${weight} kg
+Godine: ${age}
+Iskustvo: ${experience}
+Cilj: ${goal}
+Treninga sedmično: ${trainingDays}
+Mjesto treninga: ${location}
+Obroka dnevno: ${meals}
+
+NAPRAVI PLAN ZA SVIH 7 DANA.
+
+Za SVAKI dan obavezno napiši:
+
+DAN 1 - PONEDJELJAK
+- da li je trening ili odmor
+- konkretne vježbe
+- serije
+- ponavljanja
+- odmor između serija
+- obroke za taj dan
+- približne kalorije
+- približne proteine
+- unos vode
+
+Isto uradi za:
+DAN 2 - UTORAK
+DAN 3 - SRIJEDA
+DAN 4 - ČETVRTAK
+DAN 5 - PETAK
+DAN 6 - SUBOTA
+DAN 7 - NEDJELJA
+
+Plan mora biti stvarno prilagođen podacima korisnika.
+
+Ako je korisnik početnik, koristi jednostavnije i sigurnije vježbe.
+Ako trenira kod kuće, koristi samo opremu koju ima.
+Ako trenira u teretani, koristi vježbe i sprave dostupne u teretani.
+Obavezno ubaci dane oporavka prema broju treninga sedmično.
+
+Piši jasno, pregledno i praktično na srpskom/bosanskom jeziku.
+
+Na kraju dodaj:
+- UKUPNI CILJ
+- PREPORUČENI DNEVNI KALORIJSKI RASPON
+- PREPORUČENI PROTEIN
+- PREPORUKU ZA VODU
+
+Napomena: kalorije, proteini i voda su okvirne preporuke, a ne medicinski savjet.
+`;
+
+    const response = await fetch(
+      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/run/@cf/zai-org/glm-4.7-flash",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "system",
+              content: "You are GymGenie, a helpful AI fitness and nutrition planner."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ]
+        })
+      }
+    );
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || "Greška pri generisanju plana.");
+    if (!response.ok || !data.success) {
+      return res.status(response.status || 500).json({
+        error:
+          data.errors?.[0]?.message ||
+          "Cloudflare AI greška."
+      });
     }
 
-    const plan = data.plan;
-
-    document.getElementById("weeklyPlan").innerHTML = `
-      <div class="day">
-        <span class="tag">GYMGENIE AI</span>
-        <h3>🤖 Tvoj personalizovani plan</h3>
-        <p style="white-space: pre-wrap;">${escapeHtml(plan)}</p>
-      </div>
-    `;
-
-    const bmi = weight / Math.pow(height / 100, 2);
-    const calories = weight * 30;
-    const protein = Math.round(weight * 1.8);
-    const water = (weight * 0.035).toFixed(1);
-
-    document.getElementById("bmi").textContent = bmi.toFixed(1);
-    document.getElementById("calories").textContent =
-      Math.round(calories) + " kcal";
-    document.getElementById("protein").textContent =
-      protein + " g";
-    document.getElementById("water").textContent =
-      water + " L";
-
-    document.getElementById("result").style.display = "block";
-
-    window.scrollTo({
-      top: document.getElementById("result").offsetTop,
-      behavior: "smooth"
+    return res.status(200).json({
+      plan: data.result?.response || "AI nije vratio plan."
     });
 
   } catch (error) {
-    alert("Greška: " + error.message);
-  } finally {
-    button.disabled = false;
-    button.textContent = "GENERIRAJ MOJ PLAN";
+    return res.status(500).json({
+      error: "Greška servera."
+    });
   }
 }
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
-</script>
-
-</body>
-</html>
-
-
-
-
-
-
