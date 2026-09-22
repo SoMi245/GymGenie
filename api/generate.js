@@ -1,6 +1,8 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
@@ -22,10 +24,11 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-Ti si GymGenie, AI fitness i nutrition planner.
+Ti si GymGenie, personalni AI fitness i nutrition trener.
 
-Napravi personalizovan sedmodnevni plan na osnovu ovih podataka:
+Napravi potpuno personalizovan plan za korisnika.
 
+PODACI KORISNIKA:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
@@ -35,44 +38,82 @@ Treninga sedmično: ${trainingDays}
 Mjesto treninga: ${location}
 Obroka dnevno: ${meals}
 
-Plan mora sadržavati:
-- svih 7 dana, od ponedjeljka do nedjelje
-- za svaki dan trening ili odmor
+NAPRAVI PLAN ZA SVIH 7 DANA.
+
+Za SVAKI dan obavezno napiši:
+
+DAN 1 - PONEDJELJAK
+- da li je trening ili odmor
 - konkretne vježbe
-- serije, ponavljanja i odmor
+- serije
+- ponavljanja
+- odmor između serija
 - obroke za taj dan
-- približne kalorije i proteine
-- preporuku za unos vode
-- dane oporavka
+- približne kalorije
+- približne proteine
+- unos vode
 
-Ako je korisnik početnik, nemoj davati nepotrebno komplikovane vježbe.
-Ako trenira kod kuće ili bez opreme, koristi samo odgovarajuće vježbe.
+Isto uradi za:
+DAN 2 - UTORAK
+DAN 3 - SRIJEDA
+DAN 4 - ČETVRTAK
+DAN 5 - PETAK
+DAN 6 - SUBOTA
+DAN 7 - NEDJELJA
 
-Odgovor napiši na srpskom/bosanskom jeziku i neka bude jasan i praktičan.
+Plan mora biti stvarno prilagođen podacima korisnika.
+
+Ako je korisnik početnik, koristi jednostavnije i sigurnije vježbe.
+Ako trenira kod kuće, koristi samo opremu koju ima.
+Ako trenira u teretani, koristi vježbe i sprave dostupne u teretani.
+Obavezno ubaci dane oporavka prema broju treninga sedmično.
+
+Piši jasno, pregledno i praktično na srpskom/bosanskom jeziku.
+
+Na kraju dodaj:
+- UKUPNI CILJ
+- PREPORUČENI DNEVNI KALORIJSKI RASPON
+- PREPORUČENI PROTEIN
+- PREPORUKU ZA VODU
+
+Napomena: kalorije, proteini i voda su okvirne preporuke, a ne medicinski savjet.
 `;
 
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-5",
-        input: prompt
-      })
-    });
+    const response = await fetch(
+      "https://api.cloudflare.com/client/v4/accounts/a43fed266914fe3fc335395be49d2413/ai/run/@cf/zai-org/glm-4.7-flash",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "system",
+              content: "You are GymGenie, a helpful AI fitness and nutrition planner."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ]
+        })
+      }
+    );
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.error?.message || "AI greška"
+    if (!response.ok || !data.success) {
+      return res.status(response.status || 500).json({
+        error:
+          data.errors?.[0]?.message ||
+          "Cloudflare AI greška."
       });
     }
 
     return res.status(200).json({
-      plan: data.output_text
+      plan: data.result?.response || "AI nije vratio plan."
     });
 
   } catch (error) {
