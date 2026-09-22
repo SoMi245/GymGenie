@@ -1,48 +1,35 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Koristi POST zahtjev."
-    });
+    return res.status(405).json({ error: "Koristi POST." });
   }
 
   try {
-    const {
-      height,
-      weight,
-      age,
-      experience,
-      goal,
-      trainingDays,
-      location,
-      meals
-    } = req.body || {};
+    const { height, weight, age, experience, goal, trainingDays, location, meals } = req.body || {};
 
     const prompt = `
-Ti si GymGenie AI trener.
+Napravi kratak personalizovani fitness plan za 7 dana.
 
+Korisnik:
 Visina: ${height} cm
 Težina: ${weight} kg
 Godine: ${age}
 Iskustvo: ${experience}
 Cilj: ${goal}
 Treninga sedmično: ${trainingDays}
-Mjesto treninga: ${location}
+Mjesto: ${location}
 Obroka dnevno: ${meals}
 
-Napravi KRATAK plan za svih 7 dana.
+Za svaki od 7 dana napiši:
+DAN:
+TRENING ili ODMOR
+Vježbe sa serijama i ponavljanjima ako je trening
+Obroke
+Kalorije
+Protein
+Vodu
 
-Za svaki dan napiši:
-- TRENING ili ODMOR
-- 3 do 5 vježbi ako je trening
-- serije x ponavljanja
-- obroke
-- kalorije
-- protein
-- vodu
-
-Bez dugog uvoda.
-Bez objašnjenja vježbi.
-Piši kratko na srpskom/bosanskom jeziku.
+Budi kratak. Bez uvoda i bez objašnjenja vježbi.
+Piši na srpskom/bosanskom.
 `;
 
     const response = await fetch(
@@ -56,31 +43,72 @@ Piši kratko na srpskom/bosanskom jeziku.
         body: JSON.stringify({
           model: "@cf/zai-org/glm-4.7-flash",
           messages: [
-            {
-              role: "user",
-              content: prompt
-            }
+            { role: "user", content: prompt }
           ],
-          max_completion_tokens: 1800,
-          temperature: 0.5
+          max_tokens: 1200
         })
       }
     );
 
-    const data = await response.json();
+    const text = await response.text();
 
-    // PRIVREMENI TEST:
-    // Prikazuje kompletan odgovor Cloudflare-a
-    // da vidimo gdje se nalazi AI tekst.
-    return res.status(200).json({
-      cloudflare_response: data
-    });
+    if (!response.ok) {
+      return res.status(502).json({
+        error: "Cloudflare greška",
+        details: text
+      });
+    }
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      return res.status(502).json({
+        error: "Cloudflare nije vratio JSON.",
+        details: text
+      });
+    }
+
+    let plan = "";
+
+    // Cloudflare OpenAI format
+    if (data.choices && data.choices[0]) {
+      const choice = data.choices[0];
+
+      if (choice.message && typeof choice.message.content === "string") {
+        plan = choice.message.content;
+      }
+
+      if (!plan && typeof choice.text === "string") {
+        plan = choice.text;
+      }
+    }
+
+    // Cloudflare Workers AI format
+    if (!plan && data.result) {
+      if (typeof data.result.response === "string") {
+        plan = data.result.response;
+      }
+
+      if (typeof data.result.content === "string") {
+        plan = data.result.content;
+      }
+    }
+
+    if (!plan) {
+      return res.status(502).json({
+        error: "AI nije vratio plan.",
+        details: JSON.stringify(data)
+      });
+    }
+
+    return res.status(200).json({ plan });
 
   } catch (error) {
-    console.error("SERVER ERROR:", error);
-
     return res.status(500).json({
-      error: "Greška servera: " + (error?.message || "Nepoznata greška.")
+      error: "Greška servera.",
+      details: error.message
     });
   }
 }
